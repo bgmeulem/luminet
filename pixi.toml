@@ -1,0 +1,16 @@
+[project]
+authors = ["bgmeulem"]
+channels = ["conda-forge"]
+description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
+name = "luminet"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+matplotlib = ">=3.10.0,<4"
+numpy = ">=2.2.2,<3"
+scipy = ">=1.15.1,<2"
+pandas = ">=2.2.3,<3"
+
