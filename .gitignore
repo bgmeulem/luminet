@@ -2,3 +2,5 @@
 # pixi environments
 .pixi
 *.egg-info
+**.pyc
+**__pycache__**
