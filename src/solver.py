@@ -1,3 +1,8 @@
+"""Scipy solvers.
+
+This module provides wrappers to scipy solvers.
+"""
+
 from functools import partial
 from typing import Callable, Dict
 
@@ -11,8 +16,18 @@ def improve_solutions(
     y: np.ndarray,
     kwargs: Dict,
 ) -> np.ndarray:
-    """
-    Find the root of a function.
+    """Find the root of a function.
+
+    Uses brentq to find the root of a function.
+
+    Args:
+        func (Callable): function to find the root of
+        x (np.ndarray): x values
+        y (np.ndarray): y values
+        kwargs (Dict): keyword arguments for the function
+
+    Returns:
+        float: Root of the function i.e. where :math:`y = 0`
     """
     assert len(x) == len(y) == 2, "x and y must have length 2"
     assert np.sign(y[0]) != np.sign(y[1]), "No sign change in y"
@@ -33,6 +48,8 @@ def fmin_2d(
 ):
     """
     Find the minimum of a function of two variables.
+
+    :meta private:
     """
     res = opt.fmin(func, x0, args=args, xtol=xtol, ftol=ftol, maxiter=maxiter)
     return res.xopt

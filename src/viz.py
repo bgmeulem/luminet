@@ -1,3 +1,8 @@
+"""Visualization routines for the project.
+
+Provides convenience functions for plotting colored lines.
+"""
+
 import matplotlib.collections as mcoll
 import matplotlib.pyplot as plt
 import numpy as np

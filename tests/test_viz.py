@@ -13,7 +13,7 @@ def test_bh_isoradial_coverage():
     incl = 85 * np.pi / 180
     outer_accretion_disk_edge = 40 * M
     bh = black_hole.BlackHole(
-        inclination=incl, mass=M, outer_edge=outer_accretion_disk_edge
+        incl=incl, mass=M, outer_edge=outer_accretion_disk_edge
     )
     t_start = time.time()
     ax = bh.plot()

@@ -20,7 +20,7 @@ All variables in this repo are in natural units: $G=c=1$
 >>> from black_hole import BlackHole
 >>> bh = BlackHole(
 ...     mass=1,
-...     inclination=1.5,    # in radians
+...     incl=1.5,           # inclination in radians
 ...     acc=1,              # accretion rate
 ...     outer_edge=40)
 ```
