@@ -7,6 +7,10 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
 ![Example plot of a black hole](./assets/bh_plot.png)
 </div>
   
+# Installation
+
+This project uses [`pixi`](https://pixi.sh/latest/) for installation and dependency management.
+To activate the environent, simply run `pixi shell` in this directory.
 
 # Usage
 
