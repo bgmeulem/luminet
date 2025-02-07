@@ -206,7 +206,7 @@ class BlackHole:
             ax = isoredshift.plot(ax, **kwargs)
         return ax
 
-    def sample_points(self, n_points=1000):
+    def sample_photons(self, n_points=1000):
         """
         Samples points on the accretion disk. This sampling is not done uniformly, but a bias is added towards the
         center of the accretion disk, as the observed flux is exponentially bigger here and this needs the most
