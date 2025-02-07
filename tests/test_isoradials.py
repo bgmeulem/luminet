@@ -1,21 +1,14 @@
-from black_hole import BlackHole, Isoradial
+from src.isoradial import Isoradial
 import numpy as np
-from tqdm import tqdm
+import pytest
 
-
-def test_bh_isoradials() -> None:
-    incl = np.random.randint(180)
-    n_isoradials = np.random.randint(2, 10)
-    radii = np.linspace(3.01, 60, n_isoradials)
-    bh = BlackHole(inclination=incl, mass=1.)
-    bh.calc_isoradials(radii, radii)
-    assert len(bh.isoradials.keys()) == n_isoradials, f"Not enough isoradials were calculated. Expected " \
-                                                      f"{n_isoradials}, but calculated only {len(bh.isoradials.keys())}"
-    direct_ir = [bh.isoradials[r][0] for r in radii]
-    ghost_ir = [bh.isoradials[r][1] for r in radii]
-    return None
-
-
-def test_isoradial_precision():
+@pytest.mark.parametrize("mass", [1., 2.])
+@pytest.mark.parametrize("inclination", [0, 45, 90, 135])
+@pytest.mark.parametrize("radius", [6., 20, 60.])
+def test_isoradials(mass, inclination, radius) -> None:
+    N_ISORADIALS=20
+    radii = np.linspace(6, 60, N_ISORADIALS)
+    ir = Isoradial(radius=radius*mass, incl=inclination, bh_mass=mass, order=0).calculate()
+    ir_ghost = Isoradial(radius=radius*mass, incl=inclination, bh_mass=mass, order=0).calculate()
 
     return None

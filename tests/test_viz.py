@@ -15,12 +15,10 @@ def test_bh_isoradial_coverage():
     bh = black_hole.BlackHole(
         inclination=incl, mass=M, outer_edge=outer_accretion_disk_edge
     )
-
+    t_start = time.time()
     ax = bh.plot()
     t_end = time.time()
-    plt.savefig("isoradials.pdf", dpi=200)
-    plt.show()
-
+    print(f"Time to calc and plot: {t_end - t_start:.2f} s")
 
 if __name__ == "__main__":
     import sys

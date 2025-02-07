@@ -117,38 +117,30 @@ def alpha(phi: float, incl: float):
     return np.arccos(cos_alpha(phi, incl))
 
 
-def eq13(
+def calc_sn(
     periastron: float,
-    ir_radius: float,
-    ir_angle: float,
+    angle: float,
     bh_mass: float,
     incl: float,
-    n: int = 0,
+    order: int = 0,
 ) -> float:
-    """
-    Relation between radius (where photon was emitted in accretion disk), a and P.
-    P can be converted to b, yielding the polar coordinates (b, a) on the photographic plate
-
-    This function get called almost everytime when you need to calculate some black hole property
-    """
+    """Calculate the elliptic integral in equation 13"""
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
         return np.nan
     z_inf = zeta_inf(periastron, bh_mass)
     m = k_squared(periastron, bh_mass)  # mpmath takes m = k² as argument.
     ell_inf = ellipkinc(z_inf, m)  # Elliptic integral F(zeta_inf, k)
-    g = np.arccos(cos_gamma(ir_angle, incl))
+    g = np.arccos(cos_gamma(angle, incl))
 
-    # Calculate the argument of sn
-    # WARNING: paper has an error here: \sqrt(P / Q) should be in denominator, not numerator
-    # There's no way that \gamma and \sqrt(P/Q) can end up on the same side of the division
-    if n == 0:  # higher order image
+    if order == 0:  # higher order image
         ellips_arg = g / (2.0 * np.sqrt(periastron / q)) + ell_inf
-    elif n > 0:  # direct image
+    elif order > 0:  # direct image
         ell_k = ellipk(m)  # calculate complete elliptic integral of mod m = k²
         ellips_arg = (
-            (g - 2.0 * n * np.pi) / (2.0 * np.sqrt(periastron / q))
-            - ell_inf + 2.0 * ell_k
+            (g - 2.0 * order * np.pi) / (2.0 * np.sqrt(periastron / q))
+            - ell_inf
+            + 2.0 * ell_k
         )
     else:
         raise NotImplementedError(
@@ -156,11 +148,49 @@ def eq13(
         )
 
     sn, _, _, _ = ellipj(ellips_arg, m)
+    return sn
+
+
+def calc_radius(
+    periastron: float,
+    ir_angle: float,
+    bh_mass: float,
+    incl: float,
+    order: int = 0,
+) -> float:
+    """Calculate the radius of the accretion disk for a given periastron value, accretion disk angle, and black hole mass.
+    
+    """
+    sn = calc_sn(periastron, ir_angle, bh_mass, incl, order)
+    q = calc_q(periastron, bh_mass)
+   
     term1 = -(q - periastron + 2.0 * bh_mass)
     term2 = (q - periastron + 6.0 * bh_mass) * sn * sn
 
-    # solve this for zero
-    return 4.0 * bh_mass * periastron - ir_radius * (term1 + term2)
+    return 4.0 * bh_mass * periastron / (term1 + term2)
+
+
+def eq13_optimizer(
+    periastron: float,
+    ir_radius: float,
+    ir_angle: float,
+    bh_mass: float,
+    incl: float,
+    order: int = 0,
+) -> float:
+    """Calculate Equation 13 for a given periastron value, accretion disk radius and angle, and black hole mass.
+
+    This version of Eq13 is used in solvers to find the periastron value that solves Eq13.
+    It is slightly different than :py:meth:`calc_radius` in that it returns 0 when Eq13 is solved.
+    """
+    q = calc_q(periastron, bh_mass)
+    if q is np.nan:
+        return np.nan
+    sn = calc_sn(periastron, ir_angle, bh_mass, incl, order)
+    term1 = -(q - periastron + 2.0 * bh_mass)
+    term2 = (q - periastron + 6.0 * bh_mass) * sn * sn
+    zero_opt = 4.0 * bh_mass * periastron - ir_radius*(term1 + term2)
+    return zero_opt
 
 
 def calc_periastron(
@@ -168,7 +198,7 @@ def calc_periastron(
     incl: float,
     alpha: float,
     bh_mass: float,
-    n: int = 0,
+    order: int = 0,
 ) -> float:
     r"""Solve eq13 for a periastron value.
 
@@ -194,7 +224,9 @@ def calc_periastron(
         return np.nan
 
     # Get an initial range for the possible periastron: must span the solution
-    min_periastron = 3. * bh_mass + n*1e-5  # higher order images go to inf for P -> 3M
+    min_periastron = (
+        3.0 * bh_mass + order * 1e-5
+    )  # higher order images go to inf for P -> 3M
     periastron_initial_guess = np.linspace(
         min_periastron,
         radius,  # Periastron cannot be bigger than the radius by definition.
@@ -204,7 +236,7 @@ def calc_periastron(
     # Check if the solution is in the initial range
     y = np.array(
         [
-            eq13(periastron_guess, radius, alpha, bh_mass, incl, n)
+            eq13_optimizer(periastron_guess, radius, alpha, bh_mass, incl, order)
             for periastron_guess in periastron_initial_guess
         ]
     )
@@ -219,15 +251,15 @@ def calc_periastron(
         "ir_angle": alpha,
         "bh_mass": bh_mass,
         "incl": incl,
-        "n": n,
+        "order": order,
     }
-    periastron_initial_guess, y = improve_solutions(
-        func=eq13,
-        kwargs=kwargs_eq13,
+    periastron = improve_solutions(
+        func=eq13_optimizer,
         x=periastron_initial_guess,
         y=y,
+        kwargs=kwargs_eq13,
     )
-    return np.mean(periastron_initial_guess)
+    return periastron
 
 
 def calc_impact_parameter(
@@ -235,7 +267,7 @@ def calc_impact_parameter(
     incl,
     alpha,
     bh_mass,
-    n=0,
+    order=0,
 ) -> float:
     """Calculate observer coordinates of a BH frame photon.
 
@@ -258,14 +290,12 @@ def calc_impact_parameter(
         midpoint_iterations (int): amount of midpoint iterations to do when searching a periastron value solving eq13
     """
     # alpha_obs is flipped alpha/bh if n is odd
-    if n % 2 == 1:
+    if order % 2 == 1:
         alpha = (alpha + np.pi) % (2 * np.pi)
 
-    periastron_solution = calc_periastron(
-        radius, incl, alpha, bh_mass, n
-    )
+    periastron_solution = calc_periastron(radius, incl, alpha, bh_mass, order)
 
-    if n == 0 and ((alpha < np.pi / 2) or (alpha > 3 * np.pi / 2)):
+    if order == 0 and ((alpha < np.pi / 2) or (alpha > 3 * np.pi / 2)):
         # Photons with small R in the lower half of the image originate from photon orbits that
         # have a perigee < 3M. However, these photons are not absorbed by the black hole and do in fact reach the camera,
         # since they never actually travel this forbidden part of their orbit.
@@ -331,7 +361,7 @@ def redshift_factor(radius, angle, incl, bh_mass, b):
         1 + z = (1 - \Omega b \cos(\eta)) \left( -g_{tt} - 2 \Omega g_{t\phi} - \Omega^2 g_{\phi\phi} \right)^{-1/2}
 
     Attention:
-        :cite:`Luminet_1979` doe snot have the correct equation for the redshift factor.
+        :cite:`Luminet_1979` does not have the correct equation for the redshift factor.
         The correct formula is given above.
     """
     # gff = (radius * np.sin(incl) * np.sin(angle)) ** 2
@@ -340,6 +370,10 @@ def redshift_factor(radius, angle, incl, bh_mass, b):
         1.0 + np.sqrt(bh_mass / (radius**3)) * b * np.sin(incl) * np.sin(angle)
     ) * (1 - 3.0 * bh_mass / radius) ** -0.5
     return z_factor
+
+
+def calc_redshift(angle, b, incl, bh_mass):
+    radius = eq13_optimizer(3 * b, 10 * b, angle, bh_mass, incl)
 
 
 if __name__ == "__main__":
