@@ -4,6 +4,7 @@
 ![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![release](https://img.shields.io/github/v/tag/bgmeulem/Luminet?include_prereleases&label=release&style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square)
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
+
 ![Example plot of a black hole](./assets/bh_plot.png)
 </div>
   
@@ -59,7 +60,7 @@ The relationship between the angles of both coordinate systems is trivial, but t
 
 $$\frac{1}{r} = - \frac{Q - P + 2M}{4MP} + \frac{Q-P+6M}{4MP}{sn}^2\left( \frac{\gamma}{2}\sqrt{\frac{Q}{P}} + F(\zeta_\infty, k) \right)$$
 
-Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ is a function of the perigee $P$, $\zeta$ are trigonometric functions of $P$, and $\gamma$ satisfies:
+Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ and $Q$ are a function of the perigee $P$, $\zeta$ are trigonometric functions of $P$, and $\gamma$ satisfies:
 
 $$\cos(\gamma) = \frac{\cos(\alpha)}{\sqrt{\cos^2\alpha + \cot^2\theta_0}}$$
 

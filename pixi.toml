@@ -35,6 +35,7 @@ toml = ">=0.10.2,<0.11"
 sphinxcontrib-bibtex = ">=2.6.3,<3"
 sphinx-copybutton = ">=0.5.2,<0.6"
 sphinx-inline-tabs = ">=2023.4.21,<2024"
+sphinx-autoapi = ">=3.4.0,<4"
 
 [feature.docs.pypi-dependencies]
 catppuccin = { version = ">=2.3.4, <3", extras = ["pygments"] }
