@@ -416,11 +416,6 @@ def redshift_factor(radius, angle, incl, bh_mass, b):
     return z_factor
 
 
-def calc_redshift(angle, b, incl, bh_mass):
-    p = calc_periastron_from_b(b, bh_mass)
-    ir_radius = calc_radius(periastron=p, ir_angle=angle, bh_mass=bh_mass, incl=incl)
-
-
 if __name__ == "__main__":
     M = 1
     print(calc_periastron(3, 10, 0, 1))
