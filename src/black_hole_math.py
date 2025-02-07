@@ -22,18 +22,22 @@ def calc_q(periastron: float, bh_mass: float) -> float:
 
 
 def calc_b_from_periastron(periastron: float, bh_mass: float) -> float:
-    """
-    Get impact parameter b from Periastron distance P
+    r"""Get impact parameter b from Periastron distance P
+
+
+    .. math::
+
+        b = \sqrt{\frac{P^3}{P - 2M}}
 
     Args:
         periastron (float): Periastron distance
         bh_mass (float): Black hole mass
 
     Attention:
-        The paper has a typo here. The fracture on the right hand side equals b², not b.
-        You can verify this by filling in u_2 in equation 3, and you'll see.
-        Only this way do the limits P -> 3M and P >> M hold true,
-        as well as the value for b_c
+        The paper has a typo here. The fracture on the right hand side equals :math:`b^2`, not :math:`b`.
+        You can verify this by filling in :math:`u_2` in Equation 3.
+        Only this way do the limits :math:`P -> 3M` and :math:`P >> M` hold true,
+        as well as the value for :math:`b_c`
 
     Returns:
         float: Impact parameter :math:`b`
@@ -124,7 +128,21 @@ def calc_sn(
     incl: float,
     order: int = 0,
 ) -> float:
-    """Calculate the elliptic integral in equation 13"""
+    r"""Calculate the elliptic integral in equation 13.
+
+    For direct images, this is:
+
+    ..math::
+
+        \text{sn} \left( \frac{\gamma}{2 \sqrt{P/Q}} + F(\zeta_{\infty}, k) \right)
+
+    For higher order images, this is:
+
+    .. math::
+
+        \text{sn} \left( \frac{\gamma - 2n\pi}{2 \sqrt{P/Q}} - F(\zeta_{\infty}, k) + 2K(k) \right)
+
+    """
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
         return np.nan
@@ -158,12 +176,30 @@ def calc_radius(
     incl: float,
     order: int = 0,
 ) -> float:
-    """Calculate the radius of the accretion disk for a given periastron value, accretion disk angle, and black hole mass.
-    
+    """Calculate the radius of origing of a trajectory.
+
+    Args:
+        periastron (float): Periastron distance. This is directly related to the observer coordinate frame :math:`b`
+        ir_angle (float): Angle of the observer/bh coordinate frame.
+        bh_mass (float): Black hole mass
+        incl (float): Inclination of the black hole
+        order (int): Order of the image. Default is :math:`0` (direct image).
+
+    See also:
+        :py:meth:`calc_impact_parameter` to convert periastron distance to impact parameter :math:`b` (observer frame).
+
+    Attention:
+        This is not the equation used to solve for the periastron value.
+        This is the equation to calculate the radius of the trajectory.
+        For the equation that is optimized in order to convert between black hole and observer frame,
+        see :py:meth:`eq13_optimizer`.
+
+    Returns:
+        float: Radius of the trajectory
     """
     sn = calc_sn(periastron, ir_angle, bh_mass, incl, order)
     q = calc_q(periastron, bh_mass)
-   
+
     term1 = -(q - periastron + 2.0 * bh_mass)
     term2 = (q - periastron + 6.0 * bh_mass) * sn * sn
 
@@ -178,10 +214,18 @@ def eq13_optimizer(
     incl: float,
     order: int = 0,
 ) -> float:
-    """Calculate Equation 13 for a given periastron value, accretion disk radius and angle, and black hole mass.
+    r"""Cost function for the optimization of the periastron value.
 
-    This version of Eq13 is used in solvers to find the periastron value that solves Eq13.
-    It is slightly different than :py:meth:`calc_radius` in that it returns 0 when Eq13 is solved.
+    This function is optimized to find the periastron value that solves equation 13:
+
+    .. math::
+
+        4 M P - r (Q - P + 2 M) + r (Q - P + 6 M) \text{sn}^2 \left( \frac{\gamma}{2 \sqrt{P/Q}} + F(\zeta_{\infty}, k) \right) = 0
+
+    When the above equation is zero, the radius is correct.
+
+    See also:
+        :py:meth:`calc_periastron` to calculate the radius of the trajectory from a periastron value.
     """
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
@@ -189,7 +233,7 @@ def eq13_optimizer(
     sn = calc_sn(periastron, ir_angle, bh_mass, incl, order)
     term1 = -(q - periastron + 2.0 * bh_mass)
     term2 = (q - periastron + 6.0 * bh_mass) * sn * sn
-    zero_opt = 4.0 * bh_mass * periastron - ir_radius*(term1 + term2)
+    zero_opt = 4.0 * bh_mass * periastron - ir_radius * (term1 + term2)
     return zero_opt
 
 
@@ -373,7 +417,8 @@ def redshift_factor(radius, angle, incl, bh_mass, b):
 
 
 def calc_redshift(angle, b, incl, bh_mass):
-    radius = eq13_optimizer(3 * b, 10 * b, angle, bh_mass, incl)
+    p = calc_periastron_from_b(b, bh_mass)
+    ir_radius = calc_radius(periastron=p, ir_angle=angle, bh_mass=bh_mass, incl=incl)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,6 @@ class Isoredshift:
         inclination,
         redshift,
         bh_mass,
-        solver_parameters=None,
         from_isoradials=None,
     ):
         # Parent black hole parameters
