@@ -2,7 +2,7 @@
 
 import numpy as np
 from typing import List
-from .isoradial import Isoradial
+from src.isoradial import Isoradial
 import logging
 logger = logging.getLogger(__name__)
 

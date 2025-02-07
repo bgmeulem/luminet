@@ -6,10 +6,10 @@ a Swarzschild black hole, as described in :cite:t:`Luminet_1979`.
 import numpy as np
 from scipy.special import ellipj, ellipk, ellipkinc
 
-from .solver import improve_solutions
+from src.solver import improve_solutions
 
 def calc_q(p: float, bh_mass: float) -> float:
-    """Convert perigee :math:`P` to :math:`Q`
+    r"""Convert perigee :math:`P` to :math:`Q`
      
     The variable :math:`Q` has no explicit physical meaning, but makes
     many equations more readable.

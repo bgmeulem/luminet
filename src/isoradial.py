@@ -12,9 +12,9 @@ from matplotlib.axes import Axes
 
 import numpy as np
 
-from . import black_hole_math as bhmath
-from .solver import improve_solutions
-from .viz import colorline
+from src import black_hole_math as bhmath
+from src.solver import improve_solutions
+from src.viz import colorline
 
 
 class Isoradial:

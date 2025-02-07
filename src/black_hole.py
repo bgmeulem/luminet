@@ -10,10 +10,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from . import black_hole_math as bhmath
-from . import transform
-from .isoradial import Isoradial
-from .isoredshift import Isoredshift
+from src import black_hole_math as bhmath
+from src.isoradial import Isoradial
+from src.isoredshift import Isoredshift
 
 
 class BlackHole:
@@ -247,7 +246,7 @@ class BlackHole:
 
     def plot(self, n_isoradials=100):
         """Plot the black hole
-        
+
         This is a wrapper method to plto the black hole.
         It simply calls the :py:meth:`plot_isoradials` method with a dense range of isoradials.
 
@@ -264,7 +263,7 @@ class BlackHole:
 
     def plot_isoredshifts(self, redshifts=None, **kwargs):
         """Plot isoredshifts for a list of redshift values
-        
+
         Args:
             redshifts (List[float]): list of redshift values
             **kwargs: additional keyword arguments for the :py:meth:`Isoredshift.plot` method.
@@ -290,10 +289,10 @@ class BlackHole:
         - ``impact_parameter``: impact parameter of the photon :math:`b`
         - ``z_factor``: redshift factor of the photon :math:`1+z`
         - ``flux_o``: observed flux of the photon :math:`F_o`
-        
+
         Attention:
-            Sampling is not done uniformly, but biased towards the 
-            center of the accretion disk, as this is where most of the luminosity comes from.        
+            Sampling is not done uniformly, but biased towards the
+            center of the accretion disk, as this is where most of the luminosity comes from.
         """
         n_points = int(n_points)
         min_radius_ = self.disk_inner_edge
@@ -341,6 +340,7 @@ class BlackHole:
 
         self.photons = df
         self.ghost_photons = df_ghost
+
 
 def sample_photon(min_r, max_r, incl, bh_mass, n):
     r"""Sample a random photon from the accretion disk
