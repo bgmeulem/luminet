@@ -18,8 +18,6 @@ Luminet documentation
    transform
    viz
 
-```{bibliography}
-```
 
 
 

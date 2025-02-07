@@ -24,7 +24,8 @@ copyright = '2025, Bjorge Meulemeester'
 
 extensions = [
     'sphinx.ext.autodoc',      # Core library for html generation from docstrings
-    'sphinx.ext.autosummary',  # Create neat summary tables 
+    # 'sphinx.ext.autosummary',  # Create neat summary tables 
+    "autoapi.extension",       # Generate API documentation from code
     'sphinx.ext.napoleon',     # Preprocess docstrings to convert Google-style docstrings to reST
     'sphinx_paramlinks',       # Parameter links
     'sphinx.ext.todo',         # To-do notes
@@ -42,6 +43,8 @@ extensions = [
 exclude_patterns = []
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
+autoapi_dirs = ['../src']
+
 toc_object_entries_show_parents = 'hide'  # short toc entries
 
 
@@ -51,8 +54,8 @@ bibtex_bibfiles = ['bibliography.bib']
 # -- Napoleon settings -----------------------------------------------------
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
-napoleon_include_private_with_doc = True
-napoleon_include_special_with_doc = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
