@@ -2,71 +2,68 @@
   
 # Luminet
 ![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![release](https://img.shields.io/github/v/tag/bgmeulem/Luminet?include_prereleases&label=release&style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square)
-  
-This repo provides material for recreating the famous paper by Jean-Pierre Luminet (1979), simulating the first image of a black hole. This is done in Python 3.8
 
+Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
+![Example plot of a black hole](./assets/bh_plot.png)
 </div>
-<img src="SampledPoints_incl=85.png" alt="Picture" />
-<img src="output.gif" alt="gif" />
+  
 
 # Usage
 
+All variables in this repo are in natural units: $G=c=1$
+
 ```python
-from black_hole import *
-
-M = 1.
-
-############ The Isoradial class ############
-# Calculate single isoradial
-ir = Isoradial(radius=30*M, incl=80 * np.pi / 180, bh_mass=M, order=0)
-ir.calculate()
-ir.plot_redshift()  # plot its redshifts along the line
-
-############ The BlackHole class ############
-bh = BlackHole(inclination=85, mass=M)
-
-## Plot isoradial lines. Plotting 1 Isoradial is equivalent to the above method
-bh.plot_isoradials([10, 20, 30], [10, 20, 30])
-
-## Plot Isoredshift lines
-bh.plot_isoredshifts(redshifts=[-.5, -.35, -.15, 0., .15, .25, .5, .75, 1.])
-# This method fails for extreme inclinations i.e. edge-on and top-down
-
-## Sample points on the accretion disk and plot them
-bh.sample_points(n_points=20000)
-bh.plot_points()
-# Plot isoredshift lines from the sampled points (useful for edge-on or top-down view, where the other method fails)
-bh.plot_isoredshifts_from_points()
+>>> from black_hole import BlackHole
+>>> bh = BlackHole(
+...     mass=1,
+...     inclination=1.5,    # in radians
+...     acc=1,              # accretion rate
+...     outer_edge=40)
+```
+To create an image:
+```python
+>>> ax = bh.plot()          # Create image like above
 ```
 
-# Latest updates:
-24 February, 2022
-- Fixed redshift
-- Can now sample points in (R, alpha) space. Luminet started from the isofluxlines though, which may be (will probably be) more efficient.
+To sample photons on the accretion disk:
+```python
+>>> bh.sample_photons(100)
+>>> bh.photons
+radius  alpha   impact_parameter    z_factor    flux_o
+10.2146 5.1946  1.8935              1.1290      1.8596e-05
+... (99 more)
+```
 
-20 May, 2022 
-- changed from mpmath library to scipy for the calculation of elliptic integrals. 
-- main method of calculating isoredshifts is now done by sampling the entire accretion disk space and making a contour plot of the resulting points.  
-- added gif of rotating isoredshift values for varying inclination. 
+Note that sampling is biased towards the center of the black hole, since this is where most of the luminosity comes from.
 
-4 June, 2022
-- implemeted accretion disk size. Now the black hole photograph can be plotted including the ghost image
-- Fixed the Isoredshift algorithm. You can now calculate isoredshift lines with arbitrary precision. This method fails for edge-on or top-down inclinations (0, 90 or 180 degrees) as the isoradials and isoredshift lines don't intersect at these inclinations.
-- Moved most parameters to a separate file: `paremeters.ini`
-# TODO
 
-## Bugs
-- Fix plotting from points when inclination is over 90 degrees
+# Background
+Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
+the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$, the photon is not captured by the black hole, and can in theory be seen from an observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. Note that the perigee and the radius in observer frame $b$ are directly related:
 
-## Improvements
+$b^2 = \frac{P^3}{P-2M}$
 
-- Calculate isofluxlines in some efficiënt manner (can now be reconstructed from sampled points, but it would be neat to sample points based on isofluxlines). Perhaps calulating some points and reconstructing the lines?
-- clean up class structure. The BlackHole class does not need to contain the solver/plotting parameters of isorefshifts or isoradials. These could (and should ?) be split up. 
-- implement data classes?
-- add isoredshift ghost image plotting 
-- add video of rotating black hole
-- Kerr metric? 
+You may notice this equation has a square on the left hand side, in contrast to Luminet (1979). The original manuscript has more than a handful of notation errors in the equations. I've contacted the author about math notation mistakes, to which he responded:
 
+> "[...] à l’époque je n'avais pas encore l’expérience de relire très soigneusement les épreuves. Mais mes calculs avaient  heureusement été faits avec les bonnes formules, sinon le résultat visuel n’aurait pas été correct!" 
+>
+>"Back in the day, I did not have the habit of carefully double-checking my proofs. Luckily, I did calculate the results with the correct formulas, otherwise the image wouldn't be right!".
+
+So that set me back a handful of months. It takes a good while before you stop questioning your own programming skills, and start questioning the maths of the source material... Anywho.
+
+The relationship between the angles of both coordinate systems is trivial, but the relationship between the radii in the two reference frames is given by the monstruous Equation 13:
+
+$\frac{1}{r} = - \frac{Q - P + 2M}{4MP} + \frac{Q-P+6M}{4MP}{sn}^2\left\{ \frac{\gamma}{2}\sqrt{\frac{Q}{P}} + F(\zeta_\infty, k) \right\}$
+
+Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ is a function of the perigee $P$, $\zeta$ are trigonomic functions of $P$, and $\gamma$ is given by:
+
+$\gamma = 2\sqrt{\frac{P}{Q}}\left\{ F(\zeta_r, k) - F(\zeta_\infty, k) \right\}$
+
+In curved spacetime, there is usually more than one photon orbit that originates from the accretion disk, and arrives at the observer frame. Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
+
+$2n\pi - \gamma = 2\sqrt{\frac{Q}{P}} \left\{ 2K(k) - F(\zeta_\infty, k) - F(\zeta_r, k)  \right\}$
+
+This repo uses `scipy.optimize.brentq` to solve these equations, and provides convenient API to the concepts presented in Luminet (1979). The `BlackHole` class is the most obvious one, but it's also educative to play around with e.g. the `Isoradial` class: lines in observer frame describing photons emitted from the same radius in the black hole frame. The `Isoredshift` class provides lines of equal redshift in the observer frame.
 
 # Bibliography
 [1] Luminet, J.-P., [“Image of a spherical black hole with thin accretion disk.”](https://ui.adsabs.harvard.edu/abs/1979A%26A....75..228L/abstract), <i>Astronomy and Astrophysics</i>, vol. 75, pp. 228–235, 1979.
