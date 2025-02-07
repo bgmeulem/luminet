@@ -43,7 +43,7 @@ extensions = [
 exclude_patterns = []
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
-autoapi_dirs = ['../src']
+autoapi_dirs = ['../../src']
 
 toc_object_entries_show_parents = 'hide'  # short toc entries
 
