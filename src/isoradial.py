@@ -1,16 +1,30 @@
-import configparser
-from typing import Dict, List
-import matplotlib.pyplot as plt
+r"""Isoradial lines.
+
+This module provides the :py:class:`Isoradial` class, which is used to calculate and visualize isoradial lines.
+An isoradial line is a line of constant radius in the black hole frame :math:`(r, \alpha)`.
+This can be used to calculate how such line appears in the observer's plane :math:`(b, \alpha)`, essentailly
+visualizing the spacetime curvature.
+"""
+
+from typing import Dict
+
+from matplotlib.axes import Axes
 
 import numpy as np
 
-from . import black_hole_math as bhmath
-from . import transform
-from .solver import improve_solutions
-from .viz import colorline
+from src import black_hole_math as bhmath
+from src.solver import improve_solutions
+from src.viz import colorline
 
 
 class Isoradial:
+    r"""Calculate and visualize isoradial lines.
+
+    Attributes:
+        radii_b (np.ndarray): Radii of the isoradial in the observer plane: :math:`b`.
+        angles (np.ndarray): Angles of the isoradial in black hole / observer frame: :math:`\alpha`.
+        redshift_factors (np.ndarray): Redshift factors of the isoradial: :math:`(1 + z)`.
+    """
     def __init__(
         self,
         radius: float,
@@ -20,6 +34,21 @@ class Isoradial:
         acc: float | None = None,
         params: Dict | None = None,
     ):
+        r"""
+        Args:
+            radius (float): Radius of the isoradial in the black hole frame :math:`(r, \alpha)`
+            incl (float): Inclination angle of the observer with respect to the black hole.
+                :math:`0` degrees corresponds to the observer looking top-down on the black hole.
+                :math:`\pi/2` corresponds to the observer looking at the black hole edge-on.
+            bh_mass (float): Mass of the black hole
+            order (int): Order of the isoradial. 
+                :math:`0` corresponds to direct images, 
+                :math:`1` to the first-order image i.e. "ghost" image.
+                Default is :math:`0`.
+            acc (float): Accretion rate of the black hole. Default is None.
+            params (Dict): Additional parameters for the isoradial calculation.
+                Default is None.
+        """
         assert (
             radius >= 6.0 * bh_mass
         ), """
@@ -32,10 +61,6 @@ class Isoradial:
         self.order = order
         self.acc = acc
         self.params = params if params is not None else {"angular_precision": 100}
-        self.find_redshift_params = {
-            "force_redshift_solution": False,  # force finding a redshift solution on the isoradial
-            "max_force_iter": 5,  # only make this amount of iterations when forcing finding a solution
-        }
 
         self.radii_b = []
         self.angles = []
@@ -44,13 +69,13 @@ class Isoradial:
         self.calculate()
 
     def calculate_coordinates(self):
-        """Calculates the angles (alpha) and radii (b) of the photons emitted at radius self.radius as they would appear
-        on the observer's photographic plate. Also saves the corresponding values for the impact parameters (P).
+        """Calculates the angles :math:`alpha` and radii :math:`b` of the isoradial.
 
-        Args:
+        Saves these values in the :py:attr:`angles` and :py:attr:`radii_b` attributes.
 
         Returns:
-            tuple: Tuple containing the angles (alpha) and radii (b) for the image on the observer's photographic plate
+            Tuple[np.ndarray]: 
+                Tuple containing the angles and radiifor the image on the observer plane.
         """
 
         angles = []
@@ -81,7 +106,13 @@ class Isoradial:
         return angles, impact_parameters
 
     def calc_redshift_factors(self):
-        """Calculates the redshift factor (1 + z) over the line of the isoradial"""
+        """Calculates the redshift factor :math:`(1 + z)` over the isoradial
+
+        Saves these values in the :py:attr:`redshift_factors` attribute.
+        
+        Returns:
+            np.ndarray: Redshift factors of the isoradial
+        """
         redshift_factors = bhmath.redshift_factor(
             radius=self.radius,
             angle=self.angles,
@@ -93,11 +124,35 @@ class Isoradial:
         return redshift_factors
 
     def calculate(self):
+        """Calculates the coordinates and redshift factors on the isoradial line.
+        
+        See also:
+            :py:meth:`calculate_coordinates` and
+            :py:meth:`calc_redshift_factors`
+
+        Returns:
+            :py:class:`Isoradial`: The :py:class:`Isoradial` object itself, but with calculated coordinates and redshift factors.
+        """
         self.calculate_coordinates()
         self.calc_redshift_factors()
         return self
 
-    def get_b_from_angle(self, angle: float):
+    def get_b_from_angle(self, angle: float | np.ndarray):
+        r"""Get the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
+
+        This method does not calculate the impact parameter, but rather finds the closest
+        impact parameter to the given angle.
+
+        Args:
+            angle (float | np.ndarray): Angle :math:`\alpha` in radians.
+
+        See also:
+            :py:meth:`calc_b_from_angle` to explicitly solve for the impact parameter.
+
+        Returns:
+            float | np.ndarray: The impact parameter :math:`b` for the given angle :math:`\alpha`.
+
+        """
         angles_array = np.array(self.angles)
         radii_b_array = np.array(self.radii_b)
 
@@ -112,6 +167,16 @@ class Isoradial:
             return np.vectorize(find_closest_radii, otypes=[float])(angle)
 
     def calc_b_from_angle(self, angle: float):
+        r"""Calculate the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
+        
+        This method solves for the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
+
+        Args:
+            angle (float): Angle :math:`\alpha` in radians.
+
+        Returns:
+            float: The impact parameter :math:`b` for the given angle :math:`\alpha`.
+        """
         b = bhmath.calc_impact_parameter(
             radius=self.radius,
             incl=self.incl,
@@ -121,15 +186,18 @@ class Isoradial:
         )
         return b
 
-    def plot(self, ax, z, cmap, norm, **kwargs):
-        """
+    def plot(self, ax: Axes, z, cmap, norm, **kwargs):
+        """Plot the isoradial.
 
         Args:
-            ax: The axis on which the isoradial should be plotted
-            z: The color values to be used
-            cmap (str): The colormap to be used
-            norm (tuple): The normalization to be used
+            ax (:py:class:`~matplotlib.axes.Axes`): The axis on which the isoradial should be plotted
+            z (array-like): The color values to be used.
+            cmap (str): The colormap to be used. Must be a valid matplotlib colormap string.
+            norm (tuple): The normalization to be used.
             **kwargs: Additional arguments to be passed to the colorline function
+
+        Returns:
+            :py:class:`~matplotlib.axes.Axes`: The axis with the isoradial plotted.
         """
         ax = colorline(
             ax, self.angles, self.radii_b, z=z, cmap=cmap, norm=norm, **kwargs
@@ -137,15 +205,22 @@ class Isoradial:
 
         return ax
 
-
     def _has_redshift(self, z):
-        """Calculate if the class theoretically contains redshift value :math:`z`"""
+        """Calculate if the class theoretically contains redshift value :math:`z`
+        
+        :meta private:
+        """
         # TODO: math
 
     def calc_redshift_locations(self, redshift):
-        """
-        Calculates which location on the isoradial has some redshift value (not redshift factor)
+        """Calculates which location on the isoradial has some redshift value (not redshift factor)
 
+        Args:
+            redshift (float): Redshift value
+
+        Returns:
+            Tuple[np.ndarray]: 2-tuple containing the angles and radii for the redshift value.
+                In general, either two or zero solutions exist.
         """
 
         func = (
@@ -164,7 +239,7 @@ class Isoradial:
         angles = np.linspace(0, 2 * np.pi, 1000)
         values = [func(angle) for angle in angles]
         sign_changes = np.where(np.diff(np.sign(values)))[0]
-        
+
         solutions = [None, None]  # Initialize with None to ensure two solutions
         for idx in sign_changes:
             # Find the root of the function in the interval
@@ -179,9 +254,14 @@ class Isoradial:
             except Exception as e:
                 # If brentq fails to find a root in the interval, skip it
                 pass
-        
+
         # Calculate corresponding b values for the found angles
-        b_values = [self.calc_b_from_angle(angle) if angle is not None else None for angle in solutions]
-        
-        assert len(b_values) == len(solutions) == 2, "Should have found 2 solutions, or at least padded the second solution with None"
+        b_values = [
+            self.calc_b_from_angle(angle) if angle is not None else None
+            for angle in solutions
+        ]
+
+        assert (
+            len(b_values) == len(solutions) == 2
+        ), "Should have found 2 solutions, or at least padded the second solution with None"
         return np.array(solutions), np.array(b_values)

@@ -21,7 +21,7 @@ All variables in this repo are in natural units: $G=c=1$
 >>> from black_hole import BlackHole
 >>> bh = BlackHole(
 ...     mass=1,
-...     inclination=1.5,    # in radians
+...     incl=1.5,           # inclination in radians
 ...     acc=1,              # accretion rate
 ...     outer_edge=40)
 ```
@@ -58,11 +58,11 @@ So that set me back a handful of months. It takes a good while before you stop q
 
 The relationship between the angles of both coordinate systems is trivial, but the relationship between the radii in the two reference frames is given by the monstruous Equation 13:
 
-$$\frac{1}{r} = - \frac{Q - P + 2M}{4MP} + \frac{Q-P+6M}{4MP}{sn}^2\left\( \frac{\gamma}{2}\sqrt{\frac{Q}{P}} + F(\zeta_\infty, k) \right\)$$
+$$\frac{1}{r} = - \frac{Q - P + 2M}{4MP} + \frac{Q-P+6M}{4MP}{sn}^2\left( \frac{\gamma}{2}\sqrt{\frac{Q}{P}} + F(\zeta_\infty, k) \right)$$
 
-Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ and $Q$ are a function of the photon orbit perigee $P$, $\zeta$ are trigonometric functions of $P$, and $\gamma$ is given by:
+Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ and $Q$ are a function of the perigee $P$, $\zeta$ are trigonometric functions of $P$, and $\gamma$ satisfies:
 
-$$\gamma = 2\sqrt{\frac{P}{Q}}\left\( F(\zeta_r, k) - F(\zeta_\infty, k) \right\)$$
+$$\cos(\gamma) = \frac{\cos(\alpha)}{\sqrt{\cos^2\alpha + \cot^2\theta_0}}$$
 
 In curved spacetime, there is usually more than one photon orbit that originates from the accretion disk, and arrives at the observer frame. Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
 

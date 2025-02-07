@@ -9,7 +9,7 @@ def test_varying_mass(mass):
     """
 
     for incl in (0, 45, 90, 135):
-        bh = BlackHole(inclination=incl, mass=mass)
+        bh = BlackHole(incl=incl, mass=mass)
         radii = np.linspace(6*mass, 60*mass, 10)
         bh.calc_isoradials(direct_r=radii, ghost_r=radii)  # calculate some isoradials, should be quick enough
         for isoradial in bh.isoradials:
