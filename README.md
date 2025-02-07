@@ -4,6 +4,7 @@
 ![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![release](https://img.shields.io/github/v/tag/bgmeulem/Luminet?include_prereleases&label=release&style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square)
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
+
 ![Example plot of a black hole](./assets/bh_plot.png)
 </div>
   
