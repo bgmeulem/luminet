@@ -59,7 +59,7 @@ The relationship between the angles of both coordinate systems is trivial, but t
 
 $\frac{1}{r} = - \frac{Q - P + 2M}{4MP} + \frac{Q-P+6M}{4MP}{sn}^2\left\{ \frac{\gamma}{2}\sqrt{\frac{Q}{P}} + F(\zeta_\infty, k) \right\}$
 
-Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ is a function of the perigee $P$, $\zeta$ are trigonomic functions of $P$, and $\gamma$ is given by:
+Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ is a function of the perigee $P$, $\zeta$ are trigonometric functions of $P$, and $\gamma$ is given by:
 
 $\gamma = 2\sqrt{\frac{P}{Q}}\left\{ F(\zeta_r, k) - F(\zeta_\infty, k) \right\}$
 
