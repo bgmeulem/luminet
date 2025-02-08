@@ -44,7 +44,7 @@ Note that sampling is biased towards the center of the black hole, since this is
 
 # Background
 Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
-the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$, the photon is not captured by the black hole, and can in theory be seen from an observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
+the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$ (also called the photon sphere), the photon is not captured by the black hole and can in theory be seen from some observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
 
 $$b^2 = \frac{P^3}{P-2M}$$
 
@@ -68,6 +68,8 @@ $$\cos(\gamma) = \frac{\cos(\alpha)}{\sqrt{\cos^2\alpha + \cot^2\theta_0}}$$
 In curved spacetime, there is usually more than one photon orbit that originates from the accretion disk, and arrives at the observer frame. Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
 
 $$2n\pi - \gamma = 2\sqrt{\frac{Q}{P}} \left( 2K(k) - F(\zeta_\infty, k) - F(\zeta_r, k)  \right)$$
+
+These ghost photons are what you see on the lower half of the image above, as well as the barely visible halo of light that wraps thinly around the photon sphere. For inclinations that are less edge-on, this ghost image is less pronounced though. 
 
 This repo uses `scipy.optimize.brentq` to solve these equations, and provides convenient API to the concepts presented in Luminet (1979). The `BlackHole` class is the most obvious one, but it's also educative to play around with e.g. the `Isoradial` class: lines in observer frame describing photons emitted from the same radius in the black hole frame. The `Isoredshift` class provides lines of equal redshift in the observer frame.
 
