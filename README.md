@@ -44,17 +44,18 @@ Note that sampling is biased towards the center of the black hole, since this is
 
 # Background
 Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
-the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$, the photon is not captured by the black hole, and can in theory be seen from an observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. Note that the perigee and the radius in observer frame $b$ are directly related:
+the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$, the photon is not captured by the black hole, and can in theory be seen from an observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
 
 $$b^2 = \frac{P^3}{P-2M}$$
 
-You may notice this equation has a square on the left hand side, in contrast to Luminet (1979). The original manuscript has more than a handful of notation errors in the equations. I've contacted the author about math notation mistakes, to which he responded:
+This makes many equations significantly more straightforward. 
+You may notice this equation has a square on the left hand side, in contrast to Luminet (1979). The original manuscript has a handful of notation errors. I've contacted the author about this, to which he kindly responded:
 
 > "[...] à l’époque je n'avais pas encore l’expérience de relire très soigneusement les épreuves. Mais mes calculs avaient  heureusement été faits avec les bonnes formules, sinon le résultat visuel n’aurait pas été correct!" 
 >
 >"Back in the day, I did not have the habit of carefully double-checking my proofs. Luckily, I did calculate the results with the correct formulas, otherwise the image wouldn't be right!".
 
-So that set me back a handful of months. It takes a good while before you stop questioning your own programming skills, and start questioning the maths of the source material... Anywho.
+Just so you know. I tried to be diligent about noting where this code differs from the paper. 
 
 The relationship between the angles of both coordinate systems is trivial, but the relationship between the radii in the two reference frames is given by the monstruous Equation 13:
 
