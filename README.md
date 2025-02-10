@@ -44,7 +44,7 @@ Note that sampling is biased towards the center of the black hole, since this is
 
 # Background
 Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
-the accretion disk orbiting the black hole emits photons at radii $r>3M$. As long as the photon perigee in curved space remains larger than $3M$ (also called the photon sphere), the photon is not captured by the black hole and can in theory be seen from some observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
+the accretion disk orbiting the black hole emits photons at radii $r>6M$. As long as the photon perigee in curved space remains larger than $3M$ (also called the photon sphere), the photon is not captured by the black hole and can in theory be seen from some observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
 
 $$b^2 = \frac{P^3}{P-2M}$$
 
