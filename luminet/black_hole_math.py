@@ -6,7 +6,7 @@ a Swarzschild black hole, as described in :cite:t:`Luminet_1979`.
 import numpy as np
 from scipy.special import ellipj, ellipk, ellipkinc
 
-from src.solver import improve_solutions
+from luminet.solver import improve_solutions
 
 def calc_q(p: float, bh_mass: float) -> float:
     r"""Convert perigee :math:`P` to :math:`Q`

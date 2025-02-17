@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src import black_hole_math as bhmath
+from luminet import black_hole_math as bhmath
 
 N_inclines = 2
 N_angles = 2
