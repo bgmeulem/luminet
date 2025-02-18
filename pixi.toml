@@ -1,12 +1,25 @@
-[project]
+[workspace]
 authors = ["bgmeulem"]
-channels = ["conda-forge"]
 description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
 name = "luminet"
-platforms = ["linux-64", "osx-64", "win-64"]
 version = "0.1.0"
+preview = ["pixi-build"]
+channels = ["https://prefix.dev/conda-forge"]
+platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
 
-[dependencies]
+[package.build]
+backend = { name = "pixi-build-python", version = "0.1.*" }
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+
+# The Python package `simple_python` uses `hatchling` as Python build backend
+[package.host-dependencies]
+hatchling = "*"
+setuptools = "*"
+
+[package.run-dependencies]
 matplotlib = ">=3.10.0,<4"
 numpy = ">=2.2.2,<3"
 scipy = ">=1.15.1,<2"

@@ -1,0 +1,18 @@
+[project]
+authors = [
+    { name = "bgmeulem", email="bjorge.meulemeester@mpinb.mpg.de"}
+]
+description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
+name = "luminet"
+version = "0.1.0"
+
+[tool.setuptools]
+packages = ["luminet"]
+
+[dependencies]
+matplotlib = ">=3.10.0,<4"
+numpy = ">=2.2.2,<3"
+scipy = ">=1.15.1,<2"
+pandas = ">=2.2.3,<3"
+pytest = ">=8.3.4,<9"
+toml = ">=0.10.2,<0.11"
