@@ -1,5 +1,5 @@
 
-from src.black_hole import *
+from luminet.black_hole import *
 import pytest
 
 @pytest.mark.parametrize("incl", np.linspace(np.pi/3, np.pi/2, 3))

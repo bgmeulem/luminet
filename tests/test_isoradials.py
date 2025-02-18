@@ -1,4 +1,4 @@
-from src.isoradial import Isoradial
+from luminet.isoradial import Isoradial
 import numpy as np
 import pytest
 

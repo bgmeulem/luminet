@@ -1,4 +1,4 @@
-from src.black_hole import *
+from luminet.black_hole import BlackHole
 import numpy as np
 import pytest
 

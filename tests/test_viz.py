@@ -4,7 +4,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import black_hole
+from luminet import black_hole
 
 
 def test_bh_isoradial_coverage():

@@ -12,18 +12,13 @@ from matplotlib.axes import Axes
 
 import numpy as np
 
-from src import black_hole_math as bhmath
-from src.solver import improve_solutions
-from src.viz import colorline
+from luminet import black_hole_math as bhmath
+from luminet.solver import improve_solutions
+from luminet.viz import colorline
 
 
 class Isoradial:
-    r"""Calculate and visualize isoradial lines.
-
-    Attributes:
-        radii_b (np.ndarray): Radii of the isoradial in the observer plane: :math:`b`.
-        angles (np.ndarray): Angles of the isoradial in black hole / observer frame: :math:`\alpha`.
-        redshift_factors (np.ndarray): Redshift factors of the isoradial: :math:`(1 + z)`.
+    """Calculate and visualize isoradial lines.
     """
     def __init__(
         self,
@@ -63,8 +58,11 @@ class Isoradial:
         self.params = params if params is not None else {"angular_precision": 100}
 
         self.radii_b = []
+        """np.ndarray: Radii of the isoradial in the observer plane :math:`b`."""
         self.angles = []
+        r"""np.ndarray: Angles of the isoradial in black hole / observer frame :math:`\alpha`."""
         self.redshift_factors = None
+        """np.ndarray: Redshift factors of the isoradial :math:`(1 + z)`."""
 
         self.calculate()
 

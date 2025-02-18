@@ -2,21 +2,13 @@
 
 import numpy as np
 from typing import List
-from src.isoradial import Isoradial
+from luminet.isoradial import Isoradial
 import logging
 logger = logging.getLogger(__name__)
 
 
 class Isoredshift:
     """Class to calculate and visualize lines of equal redshift in the observer plane.
-    
-    Attributes:
-        incl (float): inclination angle of the observer
-        bh_mass (float): mass of the black hole
-        redshift (float): redshift value
-        angles (np.ndarray): angles of the isoredshifts
-        radii_b (np.ndarray): radii of the isoredshifts in the observer plane.
-        ir_radii (np.ndarray): radii of the isoradials used to calculate the isoredshifts
     """
     def __init__(
         self,
@@ -39,13 +31,19 @@ class Isoredshift:
             from_isoradials = {}
 
         self.incl = incl
+        """float: inclination angle of the observer"""
         self.bh_mass = bh_mass
+        """float: mass of the black hole"""
         self.redshift = redshift
+        """float: redshift value"""
 
         # Isoredshift attributes
         self.angles = np.array([np.empty_like(from_isoradials, dtype=float), np.empty_like(from_isoradials, dtype=float)])
+        """np.ndarray: angles of the isoredshifts"""
         self.radii_b = np.array([np.empty_like(from_isoradials, dtype=float), np.empty_like(from_isoradials, dtype=float)])
+        """np.ndarray: radii of the isoredshifts in the observer plane."""
         self.ir_radii = np.empty_like(from_isoradials, dtype=float)
+        """np.ndarray: radii of the isoradials used to calculate the isoredshifts"""
 
         # Calculate coordinates
         self.calc_from_isoradials(from_isoradials)

@@ -10,29 +10,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src import black_hole_math as bhmath
-from src.isoradial import Isoradial
-from src.isoredshift import Isoredshift
+from luminet import black_hole_math as bhmath
+from luminet.isoradial import Isoradial
+from luminet.isoredshift import Isoredshift
 
 
 class BlackHole:
     """Black hole class for calculating and visualizing a Swarzschild black hole.
-
-    Attributes:
-        incl (float): inclination angle of the observer
-        mass (float): mass of the black hole
-        acc (float): accretion rate of the black hole
-        critical_b (float): critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`
-        isoradial_template (partial): partial function to create an isoradial with some radius and order.
-        isoradials (List[Isoradial]): list of calculated isoradials
-        isoredshifts (List[Isoredshift]): list of calculated isoredshifts
-        disk_outer_edge (float): outer edge of the accretion disk. Default is :math:`30 M`.
-        disk_inner_edge (float): inner edge of the accretion disk i.e. :math:`6 M`.
-        disk_apparent_outer_edge (:py:class:`Isoradial`): isoradial that defines the outer edge of the accretion disk.
-        disk_apparent_inner_edge (:py:class:`Isoradial`): isoradial that defines the inner edge of the accretion disk.
-        disk_apparent_inner_edge_ghost (:py:class:`Isoradial`): isoradial that defines the inner edge of the ghost image.
-        disk_apparent_outer_edge_ghost (:py:class:`Isoradial`): isoradial that defines the outer edge of the ghost image.
-
     """
 
     def __init__(self, mass=1.0, incl=1.5, acc=1.0, outer_edge=None):
@@ -43,9 +27,13 @@ class BlackHole:
             acc (float): Accretion rate in natural units
         """
         self.incl = incl
+        """float: Inclination angle of the observer"""
         self.mass = mass
+        """float: Mass of the black hole"""
         self.acc = acc  # accretion rate, in natural units
+        """float: Accretion rate of the black hole"""
         self.critical_b = 3 * np.sqrt(3) * self.mass
+        r"""float: critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`"""
         self.settings = {}  # All settings: see below
         self.ir_parameters = {}
         self._read_parameters()
@@ -56,17 +44,27 @@ class BlackHole:
             bh_mass=self.mass,
             params=self.ir_parameters,
         )
+        """isoradial_template (partial): partial function to create an isoradial with some radius and order."""
+
         self.disk_outer_edge = (
             outer_edge if outer_edge is not None else 30.0 * self.mass
         )
+        """float: outer edge of the accretion disk. Default is :math:`30 M`."""
         self.disk_inner_edge = 6.0 * self.mass
+        """float: inner edge of the accretion disk i.e. :math:`6 M`."""
         self.disk_apparent_outer_edge = self._calc_outer_isoradial()
+        """:py:class:`Isoradial`: isoradial that defines the outer edge of the accretion disk."""
         self.disk_apparent_inner_edge = self._calc_inner_isoradial()
+        """:py:class:`Isoradial`: isoradial that defines the inner edge of the accretion disk."""
         self.disk_apparent_inner_edge_ghost = self._calc_inner_isoradial(order=1)
+        """:py:class:`Isoradial`: isoradial that defines the inner edge of the ghost image."""
         self.disk_apparent_outer_edge_ghost = self._calc_outer_isoradial(order=1)
+        """:py:class:`Isoradial`: isoradial that defines the outer edge of the ghost image."""
 
         self.isoradials = []
+        """List[Isoradial]: list of calculated isoradials"""
         self.isoredshifts = []
+        """List[Isoredshift]: list of calculated isoredshifts"""
 
     def _read_parameters(self):
         pardir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
