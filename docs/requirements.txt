@@ -1,0 +1,4 @@
+# requirements needed to build docs
+matplotlib
+scipy
+numpy
