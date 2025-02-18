@@ -14,7 +14,7 @@ pandas = ">=2.2.3,<3"
 pytest = ">=8.3.4,<9"
 
 [activation]
-env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)" }
+env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
 
 [tasks]
 test = { cmd = "pytest", cwd = "tests"}

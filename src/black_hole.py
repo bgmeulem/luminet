@@ -155,7 +155,7 @@ class BlackHole:
         self,
         direct_r: List[int | float],
         ghost_r: List[int | float] = None,
-        color="flux",
+        color_by="flux",
         **kwargs,
     ):
         """Given an array of radii for the direct image and/or ghost image, plots the corresponding
@@ -167,36 +167,47 @@ class BlackHole:
         self.calc_isoradials(direct_r, ghost_r)
         _, ax = self._get_fig_ax()
 
-        if color == "redshift":
-            cmap = "RdBu_r"
+        if color_by == "redshift":
+            if not "cmap" in kwargs:
+                kwargs["cmap"] = "RdBu_r"
             zs = [ir.redshift_factors for ir in self.isoradials]
             mx = np.max([np.max(z) for z in zs])
             norm = (-mx, mx)
-        elif color == "flux":
-            cmap = "Greys_r"
+        elif color_by == "flux":
+            if not "cmap" in kwargs:
+                kwargs["cmap"] = "Greys_r"
             zs = [
                 bhmath.flux_observed(ir.radius, self.acc, self.M, ir.redshift_factors)
                 for ir in self.isoradials
             ]
             mx = np.max([np.max(z) for z in zs])
             norm = (0, mx)
-        else:
-            raise ValueError(
-                f"Color {color} not recognized. Options are 'flux' or 'redshift'"
-            )
-
+        
         for z, ir in zip(zs, self.isoradials):
-            ax = ir.plot(ax, z=z, cmap=cmap, norm=norm, **kwargs)
+            if ir.radius in direct_r and ir.order == 0:
+                ax = ir.plot(ax, z=z, norm=norm, zorder= ir.radius, **kwargs)
+            elif ir.radius in ghost_r and ir.order == 1:
+                ax = ir.plot(ax, z=z, norm=norm, zorder= -ir.radius, **kwargs)
 
         biggest_ir = sorted(self.isoradials, key=lambda x: x.radius)[-1]
-        ax.set_ylim((0, max(biggest_ir.radii_b)))
+        ax.set_ylim((0, 1.1*max(biggest_ir.radii_b)))
         return ax
 
-    def plot(self, n_isoradials=100):
-        """Plot a black hole by plotting a full range of isoradials"""
+    def plot(self, n_isoradials=100, **kwargs):
+        """Plot the black hole
+
+        This is a wrapper method to plto the black hole.
+        It simply calls the :py:meth:`plot_isoradials` method with a dense range of isoradials.
+
+        Args:
+            n_isoradials (int): number of isoradials to plot
+
+        Returns:
+            :py:class:`~matplotlib.axes.Axes`: The axis with the isoradials plotted.
+        """
 
         radii = np.linspace(self.disk_inner_edge, self.disk_outer_edge, n_isoradials)
-        ax = self.plot_isoradials(direct_r=radii, ghost_r=radii, color="flux")
+        ax = self.plot_isoradials(direct_r=radii, ghost_r=radii, color_by="flux", **kwargs)
         return ax
 
     def plot_isoredshifts(self, redshifts=None, **kwargs):
