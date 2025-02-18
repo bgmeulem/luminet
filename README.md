@@ -11,7 +11,11 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
 # Installation
 
 This project uses [`pixi`](https://pixi.sh/latest/) for installation and dependency management.
-To activate the environent, simply run `pixi shell` in this directory.
+To activate the environment, simply run `pixi shell` in this directory.
+
+# Documentation
+
+Documentation can be found [here](https://luminet.readthedocs.io/en/latest/index.html).
 
 # Usage
 
