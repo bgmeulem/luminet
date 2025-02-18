@@ -82,3 +82,9 @@ sphinx-autoapi = ">=3.4.0,<4"
 [tool.pixi.feature.docs.pypi-dependencies]
 catppuccin = { version = ">=2.3.4, <3", extras = ["pygments"] }
 sphinx-paramlinks = ">=0.6.0, <0.7"
+
+[tool.pixi.project]
+platforms = []
+
+[tool.pixi.dependencies]
+coverage = ">=7.6.12,<8"
