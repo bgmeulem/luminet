@@ -12,7 +12,8 @@ dependencies = [
     "scipy>=1.15.1,<2",
     "pandas>=2.2.3,<3",
     "pytest>=8.3.4,<9",
-    "toml>=0.10.2,<0.11"
+    "toml>=0.10.2,<0.11",
+    "coverage>=7.6.12,<8"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -55,7 +56,6 @@ scipy = ">=1.15.1,<2"
 pandas = ">=2.2.3,<3"
 pytest = ">=8.3.4,<9"
 toml = ">=0.10.2,<0.11"
-coverage = ">=7.6.12,<8"
 
 [tool.pixi.activation]
 env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
