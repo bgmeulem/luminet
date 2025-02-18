@@ -195,12 +195,12 @@ def calc_sn(
 
     Here, :math:`F` is the incomplete elliptic integral of the first kind, 
     and :math:`K` is the complete elliptic integral of the first kind.
-    Elliptic integrals and elliptic functions are related as:
+    Elliptic integrals and elliptic functions are related:
 
     .. math::
 
-       u = ellipkinc(\phi,m) \\
-       \text{sn}(u|m) = sin(\phi)
+       u &= F(\phi,m) \\
+       \text{sn}(u|m) &= sin(\phi)
 
 
     Attention:
@@ -425,15 +425,16 @@ def calc_impact_parameter(
 
     periastron_solution = calc_periastron(radius, incl, alpha, bh_mass, order)
 
-    if order == 0 and ((alpha < np.pi / 2) or (alpha > 3 * np.pi / 2)):
-        # Photons with small R in the lower half of the image originate from photon orbits that
-        # have a perigee < 3M. However, these photons are not absorbed by the black hole and do in fact reach the camera,
-        # since they never actually travel this forbidden part of their orbit.
-        # --> Return the newtonian limit i.e. just an ellipse, like the rings of saturn that are visible in front of saturn.
-        return ellipse(radius, alpha, incl)
     # Photons that have no perigee and are not due to the exception described above are simply absorbed
     if periastron_solution is np.nan:
-        return np.nan
+        if order == 0 and ((alpha < np.pi / 2) or (alpha > 3 * np.pi / 2)):
+            # Photons with small R in the lower half of the image originate from photon orbits that
+            # have a perigee < 3M. However, these photons are not absorbed by the black hole and do in fact reach the camera,
+            # since they never actually travel this forbidden part of their orbit.
+            # --> Return the newtonian limit i.e. just an ellipse, like the rings of saturn that are visible in front of saturn.
+            return ellipse(radius, alpha, incl)
+        else:
+            return np.nan
     b = calc_b_from_perigee(periastron_solution, bh_mass)
     return b
 
