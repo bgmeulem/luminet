@@ -127,7 +127,7 @@ def zeta_inf(p: float, bh_mass: float) -> float:
 
 
 def zeta_r(p: float, r: float, bh_mass: float) -> float:
-    r"""Calculate t:math:`zeta_r`
+    r"""Calculate :math:`zeta_r`
      
     This is used for the Jacobi incomplete elliptic integral for higher-order images.
 
