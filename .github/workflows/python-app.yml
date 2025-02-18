@@ -27,6 +27,6 @@ jobs:
         auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
     - name: Coverage and test with Codecov and Pytest
       run: |
-        coverage run -m pytest
+        pixi r coverage run -m pytest
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
