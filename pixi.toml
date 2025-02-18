@@ -15,7 +15,7 @@ pytest = ">=8.3.4,<9"
 toml = ">=0.10.2,<0.11"
 
 [activation]
-env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)" }
+env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
 
 [environments]
 docs = ["docs"]
