@@ -18,9 +18,7 @@ from luminet.viz import colorline
 
 
 class Isoradial:
-    r"""Calculate and visualize isoradial lines.
-
-    Attributes:
+    """Calculate and visualize isoradial lines.
     """
     def __init__(
         self,
@@ -60,11 +58,11 @@ class Isoradial:
         self.params = params if params is not None else {"angular_precision": 100}
 
         self.radii_b = []
-        """np.ndarray: Radii of the isoradial in the observer plane: :math:`b`."""
+        """np.ndarray: Radii of the isoradial in the observer plane :math:`b`."""
         self.angles = []
-        """np.ndarray: Angles of the isoradial in black hole / observer frame: :math:`\alpha`."""
+        r"""np.ndarray: Angles of the isoradial in black hole / observer frame :math:`\alpha`."""
         self.redshift_factors = None
-        """np.ndarray: Redshift factors of the isoradial: :math:`(1 + z)`."""
+        """np.ndarray: Redshift factors of the isoradial :math:`(1 + z)`."""
 
         self.calculate()
 

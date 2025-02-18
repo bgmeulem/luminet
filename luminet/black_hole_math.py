@@ -183,7 +183,7 @@ def calc_sn(
 
     For direct images, this is:
 
-    ..math::
+    .. math::
 
         \text{sn} \left( \frac{\gamma}{2 \sqrt{P/Q}} + F(\zeta_{\infty}, k) \right)
 

@@ -33,7 +33,7 @@ class BlackHole:
         self.acc = acc  # accretion rate, in natural units
         """float: Accretion rate of the black hole"""
         self.critical_b = 3 * np.sqrt(3) * self.mass
-        """float: critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`"""
+        r"""float: critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`"""
         self.settings = {}  # All settings: see below
         self.ir_parameters = {}
         self._read_parameters()
