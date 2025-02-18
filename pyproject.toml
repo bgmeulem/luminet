@@ -64,7 +64,7 @@ env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
 docs = ["docs"]
 
 [tool.pixi.tasks]
-test = { cmd = "pytest", cwd = "tests"}
+test = { cmd = "coverage run -m pytest", cwd = "tests"}
 
 [tool.pixi.feature.docs.tasks]
 build_docs = {cmd = ["make", "html"], description = "Build the documentation", cwd="docs"}

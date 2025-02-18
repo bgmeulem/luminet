@@ -25,8 +25,8 @@ jobs:
         cache: true
         auth-host: prefix.dev
         auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
-    - name: Coverage and test with Codecov and Pytest
+    - name: Test
       run: |
-        pixi r coverage run -m pytest
+        pixi r test
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
