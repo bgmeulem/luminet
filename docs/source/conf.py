@@ -9,7 +9,7 @@
 import sys, os, toml
 # Parse pyproject.toml to get the release version
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, os.path.abspath(os.path.join(project_root, 'src')))
+sys.path.insert(0, os.path.abspath(os.path.join(project_root, 'luminet')))
 pyproject_path = os.path.join(project_root, 'pixi.toml')
 with open(pyproject_path, 'r') as f:
     pyproject_data = toml.load(f)
@@ -39,12 +39,20 @@ extensions = [
 ]
 
 
-# templates_path = ['_templates']
-exclude_patterns = []
-autosummary_generate = True  # Turn on sphinx.ext.autosummary
-
-autoapi_dirs = ['../../src']
-
+autoapi_own_page_level = "class"
+autoapi_type = "python"
+autoapi_keep_files = True
+autoapi_add_toctree_entry = False  # we use a manual autosummary directive in api_reference.rst thats included in the toctree
+autoapi_generate_api_docs = True
+# generate the .rst stub files. The template directives don't do this. 
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-module-summary",
+]
+autoapi_dirs = ['../../luminet']
+autoapi_template_dir = "../_templates"
+templates_dir = ["../_templates"]
 toc_object_entries_show_parents = 'hide'  # short toc entries
 
 
@@ -61,7 +69,7 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False  # use a single ":parameters:" section instead of ":param arg1: description" for each argument
-napoleon_use_rtype = True  # if True, separate return type from description. otherwise, it's included in the description inline
+napoleon_use_rtype = False  # if True, separate return type from description. otherwise, it's included in the description inline
 napoleon_preprocess_types = False  # otherwise custom argument types will not work
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
@@ -70,10 +78,7 @@ napoleon_attr_annotations = True
 ## Default: alphabetically ('alphabetical')
 # autodoc_member_order = 'bysource'
 
-# autoclass_content = 'both'  # document both the class docstring, as well as __init__
 ## Generate autodoc stubs with summaries from code
-# autosummary_generate = True
-# autosummary_imported_members = False  # do not show all imported modules per module, this is too bloated
 paramlinks_hyperlink_param = 'name'
 
 # The suffix(es) of source filenames.
@@ -121,9 +126,10 @@ html_theme = "furo"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
+html_static_path = ['../../assets']
 html_theme_options = {
-    # "light_logo": "_images/isf-logo-black.png",
-    # "dark_logo": "_images/isf-logo-white.png",
+    "dark_logo": "bh_plot_dark.png",
+    "light_logo": "bh_plot_light.png",
     "sidebar_hide_name": True,
     "light_css_variables": {
         "color-brand-primary": "#000000",  # black instead of blue
