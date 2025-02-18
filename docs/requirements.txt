@@ -2,3 +2,4 @@
 matplotlib
 scipy
 numpy
+toml
