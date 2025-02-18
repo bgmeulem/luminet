@@ -1,4 +1,7 @@
-import configparser, os
+"""Black hole class for calculating and visualizing a Swarzschild black hole."""
+
+import configparser
+import os
 from functools import partial
 from multiprocessing import Pool
 from typing import List
@@ -7,43 +10,61 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from . import black_hole_math as bhmath
-from . import transform
-from .isoradial import Isoradial
-from .isoredshift import Isoredshift
+from luminet import black_hole_math as bhmath
+from luminet.isoradial import Isoradial
+from luminet.isoredshift import Isoredshift
 
 
 class BlackHole:
-    def __init__(self, mass=1.0, inclination=1.5, acc=1.0, outer_edge=None):
-        """Initialise black hole with mass and accretion rate
+    """Black hole class for calculating and visualizing a Swarzschild black hole.
+    """
 
+    def __init__(self, mass=1.0, incl=1.5, acc=1.0, outer_edge=None):
+        """
         Args:
             mass (float): Mass of the black hole in natural units :math:`G = c = 1`
-            inclination (float): Inclination of the observer's plane in radians
+            incl (float): Inclination of the observer's plane in radians
             acc (float): Accretion rate in natural units
         """
-        self.incl = inclination
-        self.M = mass
+        self.incl = incl
+        """float: Inclination angle of the observer"""
+        self.mass = mass
+        """float: Mass of the black hole"""
         self.acc = acc  # accretion rate, in natural units
-        self.critical_b = 3 * np.sqrt(3) * self.M
+        """float: Accretion rate of the black hole"""
+        self.critical_b = 3 * np.sqrt(3) * self.mass
+        r"""float: critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`"""
         self.settings = {}  # All settings: see below
         self.ir_parameters = {}
-        self.angular_properties = {}
-        self.iz_solver_params = {}
         self._read_parameters()
 
         self.isoradial_template = partial(
-            Isoradial, incl=self.incl, bh_mass=self.M, params=self.ir_parameters
+            Isoradial,
+            incl=self.incl,
+            bh_mass=self.mass,
+            params=self.ir_parameters,
         )
-        self.disk_outer_edge = outer_edge if outer_edge is not None else 30.0 * self.M
-        self.disk_inner_edge = 6.0 * self.M
+        """isoradial_template (partial): partial function to create an isoradial with some radius and order."""
+
+        self.disk_outer_edge = (
+            outer_edge if outer_edge is not None else 30.0 * self.mass
+        )
+        """float: outer edge of the accretion disk. Default is :math:`30 M`."""
+        self.disk_inner_edge = 6.0 * self.mass
+        """float: inner edge of the accretion disk i.e. :math:`6 M`."""
         self.disk_apparent_outer_edge = self._calc_outer_isoradial()
+        """:py:class:`Isoradial`: isoradial that defines the outer edge of the accretion disk."""
         self.disk_apparent_inner_edge = self._calc_inner_isoradial()
+        """:py:class:`Isoradial`: isoradial that defines the inner edge of the accretion disk."""
         self.disk_apparent_inner_edge_ghost = self._calc_inner_isoradial(order=1)
-        self.disk_apparant_outer_edge_ghost = self._calc_outer_isoradial(order=1)
+        """:py:class:`Isoradial`: isoradial that defines the inner edge of the ghost image."""
+        self.disk_apparent_outer_edge_ghost = self._calc_outer_isoradial(order=1)
+        """:py:class:`Isoradial`: isoradial that defines the outer edge of the ghost image."""
 
         self.isoradials = []
+        """List[Isoradial]: list of calculated isoradials"""
         self.isoredshifts = []
+        """List[Isoredshift]: list of calculated isoredshifts"""
 
     def _read_parameters(self):
         pardir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -54,18 +75,6 @@ class BlackHole:
                 key: eval(val) for key, val in config[section].items()
             }
         self.ir_parameters = self.settings["isoradial_angular_parameters"]
-        self.iz_solver_params = self.settings["isoredshift_solver_parameters"]
-
-    def plot_photon_sphere(self, ax=None, color="grey", n_steps=100):
-        """Plot the photon sphere, defined as a sphere with radius 3 * sqrt(3) * M"""
-        if ax is None:
-            _, ax = plt.subplots()
-
-        a = np.linspace(0, 2 * np.pi, n_steps)
-        b = [self.critical_b] * n_steps
-        x, y = transform.polar_to_cartesian(b, a, rotation=-np.pi / 2)
-        ax.plot(x, y, color=color)
-        return ax
 
     def _calc_inner_isoradial(self, order=0):
         """Calculate the isoradial that defines the inner edge of the accretion disk"""
@@ -101,19 +110,47 @@ class BlackHole:
         return fig, ax
 
     def calc_isoredshifts(self, redshifts=None, n_isoradials=100):
+        """Calculate isoredshifts for a list of redshift values
+
+        This method creates an array of :py:class:`Isoradials` whose coordinates will be lazily computed.
+        These no-coordinate isoradials are used by the :py:class:`Isoredshift` to calculate the locations
+        of redshift values along these isoradials.
+
+        Args:
+            redshifts (List[float]): list of redshift values
+            n_isoradials (int): number of isoradials to use for each isoredshift calculation.
+
+        Returns:
+            List[Isoredshift]: list of calculated isoredshifts
+        """
+
         redshifts = redshifts or []
         for redshift in redshifts:
             iz = Isoredshift(
-                inclination=self.incl,
+                incl=self.incl,
                 redshift=redshift,
-                bh_mass=self.M,
-                solver_parameters=self.iz_solver_params,
-                from_isoradials=[self.isoradial_template(r) for r in np.linspace(6, 30, n_isoradials)],
+                bh_mass=self.mass,
+                from_isoradials=[
+                    self.isoradial_template(r) for r in np.linspace(6, 30, n_isoradials)
+                ],
             )
             self.isoredshifts.append(iz)
         return self.isoredshifts
 
-    def calc_isoradials(self, direct_r: List[int | float], ghost_r: List[int | float]):
+    def calc_isoradials(
+        self, direct_r: List[int | float], ghost_r: List[int | float]
+    ) -> List[Isoradial]:
+        """Calculate isoradials for a list of radii for the direct image and/or ghost image.
+
+        These calculations are parallellized using the :py:class:`multiprocessing.Pool` class.
+
+        Args:
+            direct_r (List[int | float]): list of radii for the direct image
+            ghost_r (List[int | float]): list of radii for the ghost image
+
+        Returns:
+            List[:py:class:`Isoradial`]: list of calculated isoradials
+        """
         # calc ghost images
         with Pool() as pool:
             isoradials = pool.starmap(
@@ -122,7 +159,7 @@ class BlackHole:
                     (
                         r,
                         self.incl,
-                        self.M,
+                        self.mass,
                         1,
                         self.acc,
                         self.ir_parameters,
@@ -139,7 +176,7 @@ class BlackHole:
                     (
                         r,
                         self.incl,
-                        self.M,
+                        self.mass,
                         0,
                         self.acc,
                         self.ir_parameters,
@@ -148,52 +185,64 @@ class BlackHole:
                 ],
             )
         self.isoradials.extend(isoradials)
-
         self.isoradials.sort(key=lambda x: (1 - x.order, x.radius))
+        return self.isoradials
 
     def plot_isoradials(
         self,
         direct_r: List[int | float],
         ghost_r: List[int | float] = None,
-        color_by="flux",
+        color="flux",
         **kwargs,
-    ):
-        """Given an array of radii for the direct image and/or ghost image, plots the corresponding
-        isoradials.
+    ) -> plt.Axes:
+        """Plot multiple isoradials.
 
+        This method can be used to plot one or more isoradials.
+        If the radii are close to each other, the isoradials will be plotted on top of each other,
+        essentially visualizing the entire black hole.
+
+        Args:
+            direct_r (List[int | float]): list of radii for the direct image
+            ghost_r (List[int | float]): list of radii for the ghost image
+            color (str): color scheme for the isoradials. Default is 'flux'.
+            **kwargs: additional keyword arguments for the :py:meth:`Isoradial.plot` method.
+
+        Returns:
+            :py:class:`~matplotlib.axes.Axes`: The axis with the isoradials plotted.
         """
 
         ghost_r = ghost_r if ghost_r is not None else []
         self.calc_isoradials(direct_r, ghost_r)
         _, ax = self._get_fig_ax()
 
-        if color_by == "redshift":
-            if not "cmap" in kwargs:
-                kwargs["cmap"] = "RdBu_r"
+        if color == "redshift":
+            cmap = "RdBu_r"
             zs = [ir.redshift_factors for ir in self.isoradials]
             mx = np.max([np.max(z) for z in zs])
             norm = (-mx, mx)
-        elif color_by == "flux":
-            if not "cmap" in kwargs:
-                kwargs["cmap"] = "Greys_r"
+        elif color == "flux":
+            cmap = "Greys_r"
             zs = [
-                bhmath.flux_observed(ir.radius, self.acc, self.M, ir.redshift_factors)
+                bhmath.flux_observed(
+                    ir.radius, self.acc, self.mass, ir.redshift_factors
+                )
                 for ir in self.isoradials
             ]
             mx = np.max([np.max(z) for z in zs])
             norm = (0, mx)
-        
+        else:
+            raise ValueError(
+                f"Color {color} not recognized. Options are 'flux' or 'redshift'"
+            )
+
         for z, ir in zip(zs, self.isoradials):
-            if ir.radius in direct_r and ir.order == 0:
-                ax = ir.plot(ax, z=z, norm=norm, zorder= ir.radius, **kwargs)
-            elif ir.radius in ghost_r and ir.order == 1:
-                ax = ir.plot(ax, z=z, norm=norm, zorder= -ir.radius, **kwargs)
+            ax = ir.plot(ax, z=z, cmap=cmap, norm=norm, **kwargs)
 
         biggest_ir = sorted(self.isoradials, key=lambda x: x.radius)[-1]
-        ax.set_ylim((0, 1.1*max(biggest_ir.radii_b)))
+        ax.set_ylim((0, max(biggest_ir.radii_b)))
         return ax
 
-    def plot(self, n_isoradials=100, **kwargs):
+    def plot(self, n_isoradials=100):
         """Plot the black hole
 
         This is a wrapper method to plto the black hole.
@@ -207,10 +256,19 @@ class BlackHole:
         """
 
         radii = np.linspace(self.disk_inner_edge, self.disk_outer_edge, n_isoradials)
-        ax = self.plot_isoradials(direct_r=radii, ghost_r=radii, color_by="flux", **kwargs)
+        ax = self.plot_isoradials(direct_r=radii, ghost_r=radii, color="flux")
         return ax
 
     def plot_isoredshifts(self, redshifts=None, **kwargs):
+        """Plot isoredshifts for a list of redshift values
+
+        Args:
+            redshifts (List[float]): list of redshift values
+            **kwargs: additional keyword arguments for the :py:meth:`Isoredshift.plot` method.
+
+        Returns:
+            :py:class:`~matplotlib.axes.Axes`: The axis with the isoredshifts plotted.
+        """
         _, ax = self._get_fig_ax()
         self.calc_isoredshifts(redshifts=redshifts)
         for isoredshift in self.isoredshifts:
@@ -218,10 +276,21 @@ class BlackHole:
         return ax
 
     def sample_photons(self, n_points=1000):
-        """
-        Samples points on the accretion disk. This sampling is not done uniformly, but a bias is added towards the
-        center of the accretion disk, as the observed flux is exponentially bigger here and this needs the most
-        precision.
+        r"""Sample points on the accretion disk.
+
+        Sampling is parallellized using the :py:class:`multiprocessing.Pool` class.
+
+        Each photon has the following properties:
+
+        - ``radius``: radius of the photon on the accretion disk :math:`r`
+        - ``alpha``: angle of the photon on the accretion disk :math:`\alpha`
+        - ``impact_parameter``: impact parameter of the photon :math:`b`
+        - ``z_factor``: redshift factor of the photon :math:`1+z`
+        - ``flux_o``: observed flux of the photon :math:`F_o`
+
+        Attention:
+            Sampling is not done uniformly, but biased towards the
+            center of the accretion disk, as this is where most of the luminosity comes from.
         """
         n_points = int(n_points)
         min_radius_ = self.disk_inner_edge
@@ -230,7 +299,7 @@ class BlackHole:
             photons = p.starmap(
                 sample_photon,
                 [
-                    (min_radius_, max_radius_, self.incl, self.M, 0)
+                    (min_radius_, max_radius_, self.incl, self.mass, 0)
                     for _ in range(n_points)
                 ],
             )
@@ -238,17 +307,21 @@ class BlackHole:
             ghost_photons = p.starmap(
                 sample_photon,
                 [
-                    (min_radius_, max_radius_, self.incl, self.M, 1)
+                    (min_radius_, max_radius_, self.incl, self.mass, 1)
                     for _ in range(n_points)
                 ],
             )
 
         df = pd.DataFrame(photons)
         df["z_factor"] = bhmath.redshift_factor(
-            df["radius"], df["alpha"], self.incl, self.M, df["impact_parameter"]
+            df["radius"],
+            df["alpha"],
+            self.incl,
+            self.mass,
+            df["impact_parameter"],
         )
         df["flux_o"] = bhmath.flux_observed(
-            df["radius"], self.acc, self.M, df["z_factor"]
+            df["radius"], self.acc, self.mass, df["z_factor"]
         )
 
         df_ghost = pd.DataFrame(ghost_photons)
@@ -256,64 +329,27 @@ class BlackHole:
             df_ghost["radius"],
             df_ghost["alpha"],
             self.incl,
-            self.M,
+            self.mass,
             df_ghost["impact_parameter"],
         )
         df_ghost["flux_o"] = bhmath.flux_observed(
-            df_ghost["radius"], self.acc, self.M, df_ghost["z_factor"]
+            df_ghost["radius"], self.acc, self.mass, df_ghost["z_factor"]
         )
 
         self.photons = df
         self.ghost_photons = df_ghost
 
-    def plot_isoredshifts_from_points(self, levels=None, extension="png"):
-        # TODO add ghost image
-
-        if levels is None:
-            levels = [
-                -0.2,
-                -0.15,
-                -0.1,
-                -0.05,
-                0.0,
-                0.05,
-                0.1,
-                0.15,
-                0.2,
-                0.25,
-                0.5,
-                0.75,
-            ]
-
-        _fig, _ax = self._get_fig_ax()
-        points = pd.read_csv(f"points_incl={int(round(self.incl * 180 / np.pi))}.csv")
-        br = self._calc_inner_isoradial()
-        color_map = plt.get_cmap("RdBu_r")
-
-        # points1 = addBlackRing(self, points1)
-        levels_ = [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.5, 0.75]
-        _ax.tricontour(
-            points["X"],
-            points["Y"],
-            [e for e in points["z_factor"]],
-            cmap=color_map,
-            norm=plt.Normalize(0, 2),
-            levels=[e + 1 for e in levels_],
-            nchunk=2,
-            linewidths=2,
-        )
-        _ax.fill_between(br.X, br.Y, color="black", zorder=2)
-        plt.show()
-        _fig.savefig(
-            f"Plots/Isoredshifts_incl={str(int(180 * self.incl / np.pi)).zfill(3)}.{extension}",
-            facecolor="black",
-            dpi=300,
-        )
-        return _fig, _ax
-
 
 def sample_photon(min_r, max_r, incl, bh_mass, n):
-    """Sample a random photon from the accretion disk
+    r"""Sample a random photon from the accretion disk
+
+    Each photon has the following properties:
+
+    - ``radius``: radius of the photon on the accretion disk :math:`r`
+    - ``alpha``: angle of the photon on the accretion disk :math:`\alpha`
+    - ``impact_parameter``: impact parameter of the photon :math:`b`
+    - ``z_factor``: redshift factor of the photon :math:`1+z`
+    - ``flux_o``: observed flux of the photon :math:`F_o`
 
     Attention:
         Photons are not sampled uniformly on the accretion disk, but biased towards the center.
