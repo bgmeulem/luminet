@@ -43,8 +43,8 @@ def calc_b_from_perigee(p: float, bh_mass: float) -> float:
         bh_mass (float): Black hole mass
 
     Attention:
-        :cite:t:`Luminet1979` ahs a typo here. 
-        The fracture on the right hand side equals :math:`b^2`, not :math:`b`.
+        :cite:t:`Luminet_1979` has a typo here. 
+        The fraction on the right hand side equals :math:`b^2`, not :math:`b`.
         You can verify this by filling in :math:`u_2` in Equation 3.
         Only this way do the limits :math:`P -> 3M` and :math:`P >> M` hold true,
         as well as the value for :math:`b_c`
@@ -57,14 +57,14 @@ def calc_b_from_perigee(p: float, bh_mass: float) -> float:
     return np.sqrt(p**3 / (p - 2.0 * bh_mass))
 
 
-def k(periastron: float, bh_mass: float) -> float:
+def calc_k(periastron: float, bh_mass: float) -> float:
     r"""Calculate the modulus of the elliptic integral
 
     The modulus is defined as:
      
     .. math::
     
-       k = \sqrt{\frac{Q - P + 6M}{2q}}
+       k = \sqrt{\frac{Q - P + 6M}{2Q}}
 
     Args:
         periastron (float): Periastron distance
@@ -72,6 +72,9 @@ def k(periastron: float, bh_mass: float) -> float:
 
     Returns:
         float: Modulus of the elliptic integral
+
+    Attention:
+        Mind the typo in :cite:t:`Luminet1979`. The numerator should be in brackets.
     """
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
@@ -80,7 +83,7 @@ def k(periastron: float, bh_mass: float) -> float:
     return np.sqrt((q - periastron + 6 * bh_mass) / (2 * q))
 
 
-def k_squared(p: float, bh_mass: float):
+def calc_k_squared(p: float, bh_mass: float):
     r"""Calculate the squared modulus of elliptic integral
 
     .. math::
@@ -102,7 +105,7 @@ def k_squared(p: float, bh_mass: float):
     return (q - p + 6 * bh_mass) / (2 * q)
 
 
-def zeta_inf(p: float, bh_mass: float) -> float:
+def calc_zeta_inf(p: float, bh_mass: float) -> float:
     r"""Calculate :math:`\zeta_\infty` 
     
     This is used in the Jacobi incomplete elliptic integral :math:`F(\zeta_\infty, k)`
@@ -126,7 +129,7 @@ def zeta_inf(p: float, bh_mass: float) -> float:
     return z_inf
 
 
-def zeta_r(p: float, r: float, bh_mass: float) -> float:
+def calc_zeta_r(p: float, r: float, bh_mass: float) -> float:
     r"""Calculate :math:`zeta_r`
      
     This is used for the Jacobi incomplete elliptic integral for higher-order images.
@@ -153,7 +156,7 @@ def zeta_r(p: float, r: float, bh_mass: float) -> float:
     return s
 
 
-def cos_gamma(alpha: float, incl: float) -> float:
+def calc_cos_gamma(alpha: float, incl: float) -> float:
     r"""Calculate :math:`\cos(\gamma)`
 
     This is used in the argument of the Jacobi elliptic integrals.
@@ -220,10 +223,10 @@ def calc_sn(
     q = calc_q(p, bh_mass)
     if q is np.nan:
         return np.nan
-    z_inf = zeta_inf(p, bh_mass)
-    m = k_squared(p, bh_mass)  # mpmath takes m = k² as argument.
+    z_inf = calc_zeta_inf(p, bh_mass)
+    m = calc_k_squared(p, bh_mass)  # mpmath takes m = k² as argument.
     ell_inf = ellipkinc(z_inf, m)  # Elliptic integral F(zeta_inf, k)
-    g = np.arccos(cos_gamma(angle, incl))
+    g = np.arccos(calc_cos_gamma(angle, incl))
 
     if order == 0:  # higher order image
         ellips_arg = g / (2.0 * np.sqrt(p / q)) + ell_inf
@@ -279,7 +282,7 @@ def calc_radius(
     return 4.0 * bh_mass * p / (term1 + term2)
 
 
-def eq13_optimizer(
+def perigee_optimization_function(
     p: float,
     ir_radius: float,
     ir_angle: float,
@@ -289,7 +292,7 @@ def eq13_optimizer(
 ) -> float:
     r"""Cost function for the optimization of the periastron value.
 
-    This function is optimized to find the periastron value that solves equation 13:
+    This function is optimized to find the periastron value that solves Equation 13 in cite:t:`Luminet1979`:
 
     .. math::
 
@@ -321,7 +324,7 @@ def eq13_optimizer(
     return zero_opt
 
 
-def calc_periastron(
+def solve_for_perigee(
     radius: float,
     incl: float,
     alpha: float,
@@ -365,13 +368,15 @@ def calc_periastron(
     # Check if the solution is in the initial range
     y = np.array(
         [
-            eq13_optimizer(periastron_guess, radius, alpha, bh_mass, incl, order)
+            perigee_optimization_function(periastron_guess, radius, alpha, bh_mass, incl, order)
             for periastron_guess in periastron_initial_guess
         ]
     )
     assert not any(np.isnan(y)), "Initial guess contains nan values"
 
-    # If the solution is not in the initial range, return nan
+    # If the solution is not in the initial range it likely doesnt exist for these input parameters
+    # can happen for high inclinations and small radii -> photon orbits have P<3M, but the photon
+    # does not travel this part of the orbit.
     if np.sign(y[0]) == np.sign(y[1]):
         return np.nan
 
@@ -383,7 +388,7 @@ def calc_periastron(
         "order": order,
     }
     periastron = improve_solutions(
-        func=eq13_optimizer,
+        func=perigee_optimization_function,
         x=periastron_initial_guess,
         y=y,
         kwargs=kwargs_eq13,
@@ -423,7 +428,7 @@ def calc_impact_parameter(
     if order % 2 == 1:
         alpha = (alpha + np.pi) % (2 * np.pi)
 
-    periastron_solution = calc_periastron(radius, incl, alpha, bh_mass, order)
+    periastron_solution = solve_for_perigee(radius, incl, alpha, bh_mass, order)
 
     # Photons that have no perigee and are not due to the exception described above are simply absorbed
     if periastron_solution is np.nan:
@@ -466,7 +471,7 @@ def ellipse(r, a, incl) -> float:
     return minor_axis / np.sqrt((1 - (eccentricity * np.cos(a)) ** 2))
 
 
-def flux_intrinsic(r, acc, bh_mass):
+def calc_flux_intrinsic(r, acc, bh_mass):
     r"""Calculate the intrinsic flux of a photon.
     
     The intrinsic flux is not redshift-corrected. Observed photons will have a flux
@@ -496,7 +501,7 @@ def flux_intrinsic(r, acc, bh_mass):
     return f
 
 
-def flux_observed(r, acc, bh_mass, redshift_factor):
+def calc_flux_observed(r, acc, bh_mass, redshift_factor):
     r"""Calculate the observed bolometric flux of a photon :math:`F_o`
 
     .. math::
@@ -512,12 +517,12 @@ def flux_observed(r, acc, bh_mass, redshift_factor):
     Returns:
         float: Observed flux of the photon :math:`F_o`
     """
-    flux_intr = flux_intrinsic(r, acc, bh_mass)
+    flux_intr = calc_flux_intrinsic(r, acc, bh_mass)
     flux_observed = flux_intr / redshift_factor**4
     return flux_observed
 
 
-def redshift_factor(radius, angle, incl, bh_mass, b):
+def calc_redshift_factor(radius, angle, incl, bh_mass, b):
     r"""
     Calculate the gravitational redshift factor (ignoring cosmological redshift):
 

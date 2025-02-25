@@ -225,7 +225,7 @@ class BlackHole:
             if not "cmap" in kwargs:
                 kwargs["cmap"] = "Greys_r"
             zs = [
-                bhmath.flux_observed(
+                bhmath.calc_flux_observed(
                     ir.radius, self.acc, self.mass, ir.redshift_factors
                 )
                 for ir in self.isoradials
@@ -314,26 +314,26 @@ class BlackHole:
             )
 
         df = pd.DataFrame(photons)
-        df["z_factor"] = bhmath.redshift_factor(
+        df["z_factor"] = bhmath.calc_redshift_factor(
             df["radius"],
             df["alpha"],
             self.incl,
             self.mass,
             df["impact_parameter"],
         )
-        df["flux_o"] = bhmath.flux_observed(
+        df["flux_o"] = bhmath.calc_flux_observed(
             df["radius"], self.acc, self.mass, df["z_factor"]
         )
 
         df_ghost = pd.DataFrame(ghost_photons)
-        df_ghost["z_factor"] = bhmath.redshift_factor(
+        df_ghost["z_factor"] = bhmath.calc_redshift_factor(
             df_ghost["radius"],
             df_ghost["alpha"],
             self.incl,
             self.mass,
             df_ghost["impact_parameter"],
         )
-        df_ghost["flux_o"] = bhmath.flux_observed(
+        df_ghost["flux_o"] = bhmath.calc_flux_observed(
             df_ghost["radius"], self.acc, self.mass, df_ghost["z_factor"]
         )
 

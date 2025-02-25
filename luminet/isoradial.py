@@ -111,7 +111,7 @@ class Isoradial:
         Returns:
             np.ndarray: Redshift factors of the isoradial
         """
-        redshift_factors = bhmath.redshift_factor(
+        redshift_factors = bhmath.calc_redshift_factor(
             radius=self.radius,
             angle=self.angles,
             incl=self.incl,
@@ -224,7 +224,7 @@ class Isoradial:
         func = (
             lambda angle: redshift
             + 1
-            - bhmath.redshift_factor(
+            - bhmath.calc_redshift_factor(
                 self.radius,
                 angle,
                 self.incl,
