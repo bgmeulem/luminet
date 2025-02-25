@@ -1,7 +1,5 @@
 [project]
-authors = [
-    { name = "bgmeulem", email="bjorge.meulemeester@mpinb.mpg.de"}
-]
+authors = [{ name = "bgmeulem", email="bjorge.meulemeester@mpinb.mpg.de"}]
 description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
 name = "luminet"
 version = "0.1.0"
@@ -29,13 +27,16 @@ classifiers = [
 "Bug Reports" = "https://github.com/bgmeulem/luminet/issues/new"
 "Source" = "https://github.com/bgmeulem/luminet"
 
+[dependency-groups]
+build = ["build>=1.2.2.post1,<2"]
+
+[tool.setuptools]
+packages = ["luminet"]
+
 [tool.pixi.workspace]
 preview = ["pixi-build"]
 channels = ["https://prefix.dev/conda-forge"]
 platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
-
-[tool.setuptools]
-packages = ["luminet"]
 
 [tool.pixi.package.build]
 backend = { name = "pixi-build-python", version = "0.1.*" }
@@ -44,7 +45,6 @@ channels = [
   "https://prefix.dev/conda-forge",
 ]
 
-# The Python package `simple_python` uses `hatchling` as Python build backend
 [tool.pixi.package.host-dependencies]
 hatchling = "*"
 setuptools = "*"
@@ -62,6 +62,7 @@ env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
 
 [tool.pixi.environments]
 docs = ["docs"]
+build = ["build"]
 
 [tool.pixi.tasks]
 test = { cmd = "coverage run -m pytest", cwd = "tests"}
@@ -83,3 +84,6 @@ sphinx-autoapi = ">=3.4.0,<4"
 [tool.pixi.feature.docs.pypi-dependencies]
 catppuccin = { version = ">=2.3.4, <3", extras = ["pygments"] }
 sphinx-paramlinks = ">=0.6.0, <0.7"
+
+[tool.pixi.feature.build.dependencies]
+twine = "*"
