@@ -27,5 +27,7 @@ jobs:
       run: |
         pixi r -e build python -m build
         pixi r -e build twine check dist/*
-    - name: Publish to PyPI
-      run: pixi r -e build twine upload --repository testpypi dist/*
+    - name: Publish to TestPyPi
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
