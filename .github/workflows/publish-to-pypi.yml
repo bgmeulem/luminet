@@ -5,6 +5,8 @@ on:
     workflows: ["Luminet Build and Test"]
     types:
       - completed
+    branches:
+      - master
 
 jobs:
   publish:
