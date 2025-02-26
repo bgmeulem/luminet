@@ -455,8 +455,7 @@ def ellipse(r, a, incl) -> float:
         incl (float): inclination of the black hole
 
     Returns:
-        float: Impact parameter :math:`b` of the photon trajectory in the observer frame,
-            which is in this case identical to the radius in the black hole frame :math:`r`
+        float: Impact parameter :math:`b` of the photon trajectory in the observer frame, which is in this case identical to the radius in the black hole frame :math:`R`
     
     """
     a = (a + np.pi / 2) % (
