@@ -7,22 +7,22 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
 
 ![Example plot of a black hole](https://raw.githubusercontent.com/bgmeulem/luminet/master/assets/bh_plot.png)
 </div>
-  
-# Installation
 
-This project uses [`pixi`](https://pixi.sh/latest/) for installation and dependency management.
-To activate the environment, simply run `pixi shell` in this directory.
+## :zap: Install
+`luminet` is available from PyPI:
 
-# Documentation
+```shell
+pip install luminet
+```
 
-Documentation can be found [here](https://luminet.readthedocs.io/en/latest/index.html).
+## :book: [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
 
-# Usage
+## :nut_and_bolt: Usage
 
 All variables in this repo are in natural units: $G=c=1$
 
 ```python
->>> from black_hole import BlackHole
+>>> from luminet.black_hole import BlackHole
 >>> bh = BlackHole(
 ...     mass=1,
 ...     incl=1.5,           # inclination in radians
@@ -46,7 +46,7 @@ radius  alpha   impact_parameter    z_factor    flux_o
 Note that sampling is biased towards the center of the black hole, since this is where most of the luminosity comes from.
 
 
-# Background
+## :memo: Background
 Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
 the accretion disk orbiting the black hole emits photons at radii $r>6M$. As long as the photon perigee in curved space remains larger than $3M$ (also called the photon sphere), the photon is not captured by the black hole and can in theory be seen from some observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
 
@@ -77,7 +77,7 @@ These ghost photons are what you see on the lower half of the image above, as we
 
 This repo uses `scipy.optimize.brentq` to solve these equations, and provides convenient API to the concepts presented in Luminet (1979). The `BlackHole` class is the most obvious one, but it's also educative to play around with e.g. the `Isoradial` class: lines in observer frame describing photons emitted from the same radius in the black hole frame. The `Isoredshift` class provides lines of equal redshift in the observer frame.
 
-# Bibliography
+## :closed_book: Bibliography
 [1] Luminet, J.-P., [“Image of a spherical black hole with thin accretion disk.”](https://ui.adsabs.harvard.edu/abs/1979A%26A....75..228L/abstract), <i>Astronomy and Astrophysics</i>, vol. 75, pp. 228–235, 1979.
 
 [2] J.-P. Luminet, [“An Illustrated History of Black Hole Imaging : Personal Recollections (1972-2002).”](https://arxiv.org/abs/1902.11196) arXiv, 2019. doi: 10.48550/ARXIV.1902.11196. 
