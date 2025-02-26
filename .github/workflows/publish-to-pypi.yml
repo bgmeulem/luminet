@@ -8,7 +8,6 @@ on:
     branches:
       - master
 
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -37,29 +36,3 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
-        body: |
-          Release notes for version v${{ github.run_number }}.
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create Git Tag
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const tagName = `v${{ github.run_number }}`;
-          const sha = process.env.GITHUB_SHA;
-          await github.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: `refs/tags/${tagName}`,
-            sha: sha
-          });
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
