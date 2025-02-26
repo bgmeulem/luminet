@@ -2,7 +2,7 @@
 authors = [{ name = "bgmeulem", email="bjorge.meulemeester@mpinb.mpg.de"}]
 description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
 name = "luminet"
-version = "0.1.3"
+version = "0.1.4"
 requires-python = ">=3.5"
 # These dependencies are a duplicate of run-dependencies. Pixi does not support PyPI backend yet,
 # and twine expects this field to exist
