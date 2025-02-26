@@ -10,8 +10,11 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
   
 # Installation
 
-This project uses [`pixi`](https://pixi.sh/latest/) for installation and dependency management.
-To activate the environment, simply run `pixi shell` in this directory.
+`luminet` is available from PyPI:
+
+```shell
+pip install luminet
+```
 
 # Documentation
 
@@ -22,7 +25,7 @@ Documentation can be found [here](https://luminet.readthedocs.io/en/latest/index
 All variables in this repo are in natural units: $G=c=1$
 
 ```python
->>> from black_hole import BlackHole
+>>> from luminet.black_hole import BlackHole
 >>> bh = BlackHole(
 ...     mass=1,
 ...     incl=1.5,           # inclination in radians
