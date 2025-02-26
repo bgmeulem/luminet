@@ -36,7 +36,7 @@ class TestParametrized:
         )
 
     def test_get_b_from_periastron(self, mass, incl, angle, radius, order):
-        b = bhmath.calc_impact_parameter(
+        b = bhmath.solve_for_impact_parameter(
             radius=radius * mass,
             incl=incl,
             alpha=angle,

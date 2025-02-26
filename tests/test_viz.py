@@ -19,6 +19,7 @@ def test_bh_isoradial_coverage():
     ax = bh.plot()
     t_end = time.time()
     print(f"Time to calc and plot: {t_end - t_start:.2f} s")
+    # plt.show()
 
 if __name__ == "__main__":
     import sys
