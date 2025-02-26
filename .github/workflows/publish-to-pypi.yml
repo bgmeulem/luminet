@@ -2,7 +2,7 @@ name: Publish to PyPI
 
 on:
   workflow_run:
-    workflows: ["Luminet Build and Test"]
+    workflows: ["Test"]
     types:
       - completed
     branches:
