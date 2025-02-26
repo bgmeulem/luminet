@@ -16,10 +16,13 @@ dependencies = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Education",
-    "Topic :: Software Development :: Build Tools",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Visualization",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
 ]
+readme = "README.md"
 
 [project.urls] 
 "Homepage" = "https://luminet.readthedocs.io/en/latest/"
