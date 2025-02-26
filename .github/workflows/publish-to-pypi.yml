@@ -28,7 +28,4 @@ jobs:
         pixi r -e build python -m build
         pixi r -e build twine check dist/*
     - name: Publish to PyPI
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: twine upload dist/*
+      run: pixi r -e build twine upload --repository testpypi dist/*
