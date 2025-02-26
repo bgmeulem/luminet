@@ -1,4 +1,4 @@
-name: Luminet
+name: Luminet Build and Test
 
 on:
   push:

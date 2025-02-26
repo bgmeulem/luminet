@@ -1,0 +1,34 @@
+name: Publish to PyPI
+
+on:
+  workflow_run:
+    workflows: ["Luminet Build and Test"]
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: deploy
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - uses: prefix-dev/setup-pixi@v0.8.2
+      with:
+        pixi-version: v0.41.3
+        cache: true
+        auth-host: prefix.dev
+        auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
+    - name: Build package
+      run: 
+        pixi r -e build python -m build
+        pixi r -e build twine check dist/*
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: twine upload dist/*
