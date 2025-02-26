@@ -4,8 +4,7 @@ description = "A leightweight Python package for calculating and plotting Swarzs
 name = "luminet"
 version = "0.1.4"
 requires-python = ">=3.5"
-# These dependencies are a duplicate of run-dependencies. Pixi does not support PyPI backend yet,
-# and twine expects this field to exist
+# PyPI dependencies
 dependencies = [
     "matplotlib>=3.10.0,<4",
     "numpy>=2.2.2,<3",
@@ -51,12 +50,6 @@ channels = [
 [tool.pixi.package.host-dependencies]
 hatchling = "*"
 setuptools = "*"
-
-[tool.pixi.package.run-dependencies]
-matplotlib = ">=3.10.0,<4"
-numpy = ">=2.2.2,<3"
-scipy = ">=1.15.1,<2"
-pandas = ">=2.2.3,<3"
 
 [tool.pixi.activation]
 env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
