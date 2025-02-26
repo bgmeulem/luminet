@@ -5,7 +5,7 @@
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
-![Example plot of a black hole](https://github.com/bgmeulem/luminet/blob/master/assets/bh_plot.png)
+![Example plot of a black hole](https://raw.githubusercontent.com/bgmeulem/luminet/master/assets/bh_plot.png)
 </div>
   
 # Installation
