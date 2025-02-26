@@ -24,7 +24,7 @@ jobs:
         auth-host: prefix.dev
         auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
     - name: Build package
-      run: 
+      run: |
         pixi r -e build python -m build
         pixi r -e build twine check dist/*
     - name: Publish to PyPI
