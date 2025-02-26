@@ -74,7 +74,7 @@ def calc_k(periastron: float, bh_mass: float) -> float:
         float: Modulus of the elliptic integral
 
     Attention:
-        Mind the typo in :cite:t:`Luminet1979`. The numerator should be in brackets.
+        Mind the typo in :cite:t:`Luminet_1979`. The numerator should be in brackets.
     """
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
