@@ -74,7 +74,7 @@ def calc_k(periastron: float, bh_mass: float) -> float:
         float: Modulus of the elliptic integral
 
     Attention:
-        Mind the typo in :cite:t:`Luminet1979`. The numerator should be in brackets.
+        Mind the typo in :cite:t:`Luminet_1979`. The numerator should be in brackets.
     """
     q = calc_q(periastron, bh_mass)
     if q is np.nan:
@@ -262,13 +262,10 @@ def calc_radius(
         incl (float): Inclination of the black hole
         order (int): Order of the image. Default is :math:`0` (direct image).
 
-    See also:
-        :py:meth:`calc_impact_parameter` to convert periastron distance to impact parameter :math:`b` (observer frame).
-
     Attention:
         This is not the equation used to solve for the perigee value :math:`P`.
         For the equation that is optimized in order to convert between black hole and observer frame,
-        see :py:meth:`eq13_optimizer`.
+        see :py:meth:`perigee_optimization_function`.
 
     Returns:
         float: Black hole frame radius :math:`r` of the photon trajectory.
@@ -301,7 +298,7 @@ def perigee_optimization_function(
     When the above equation is zero, the photon perigee value :math:`P` is correct.
 
     See also:
-        :py:meth:`calc_periastron` to calculate the radius of the trajectory from a periastron value.
+        :py:meth:`solve_for_perigee` to calculate the perigee of a photon orbit, given an accretion disk radius of origin :math:`R`.
 
     Args:
         periastron (float): Periastron distance
@@ -336,10 +333,10 @@ def solve_for_perigee(
     This photon perigee can be converted to an impact parameter :math:`b`, yielding the observer frame coordinates :math:`(b, \alpha)`.
 
     See also:
-        :py:meth:`eq13_optimizer` for the optimization function used.
+        :py:meth:`perigee_optimization_function` for the optimization function used.
     
     See also:
-        :py:meth:`calc_impact_parameter` to also convert periastron distance to impact parameter :math:`b` (observer frame).
+        :py:meth:`solve_for_impact_parameter` to also convert periastron distance to impact parameter :math:`b` (observer frame).
 
     Args:
         radius (float): radius on the accretion disk (BH frame)

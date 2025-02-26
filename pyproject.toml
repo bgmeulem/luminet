@@ -13,6 +13,7 @@ dependencies = [
     "toml>=0.10.2,<0.11",
     "coverage>=7.6.12,<8"
 ]
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Education",
