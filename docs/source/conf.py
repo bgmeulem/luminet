@@ -10,7 +10,7 @@ import sys, os, toml
 # Parse pyproject.toml to get the release version
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, os.path.abspath(os.path.join(project_root, 'luminet')))
-pyproject_path = os.path.join(project_root, 'pixi.toml')
+pyproject_path = os.path.join(project_root, 'pyproject.toml')
 with open(pyproject_path, 'r') as f:
     pyproject_data = toml.load(f)
     release = pyproject_data['project']['version']
