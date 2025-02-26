@@ -91,7 +91,7 @@ def calc_k_squared(p: float, bh_mass: float):
        k^2 = m = \frac{Q - P + 6M}{2Q}     
     
     Attention:
-        :cite:t:`Luminet1979` uses the non-squared modulus in the elliptic integrals.
+        :cite:t:`Luminet_1979` uses the non-squared modulus in the elliptic integrals.
         This is just a convention. However, ``scipy`` asks for the squared modulus :math:`m=k^2`, not the modulus.
 
     Args:
