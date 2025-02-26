@@ -36,7 +36,7 @@ class BlackHole:
         r"""float: critical impact parameter for the photon sphere :math:`3 \sqrt{3} M`"""
         self.settings = {}  # All settings: see below
         self.ir_parameters = {}
-        self._read_parameters()
+        self.ir_parameters = {"angular_precision": 200}
 
         self.isoradial_template = partial(
             Isoradial,
@@ -65,16 +65,6 @@ class BlackHole:
         """List[Isoradial]: list of calculated isoradials"""
         self.isoredshifts = []
         """List[Isoredshift]: list of calculated isoredshifts"""
-
-    def _read_parameters(self):
-        pardir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-        config = configparser.ConfigParser(inline_comment_prefixes="#")
-        config.read(os.path.join(pardir, "parameters.ini"))
-        for i, section in enumerate(config.sections()):
-            self.settings[section] = {
-                key: eval(val) for key, val in config[section].items()
-            }
-        self.ir_parameters = self.settings["isoradial_angular_parameters"]
 
     def _calc_inner_isoradial(self, order=0):
         """Calculate the isoradial that defines the inner edge of the accretion disk"""
