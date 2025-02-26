@@ -265,7 +265,7 @@ def calc_radius(
     Attention:
         This is not the equation used to solve for the perigee value :math:`P`.
         For the equation that is optimized in order to convert between black hole and observer frame,
-        see :py:meth:`eq13_optimizer`.
+        see :py:meth:`perigee_optimization_function`.
 
     Returns:
         float: Black hole frame radius :math:`r` of the photon trajectory.
