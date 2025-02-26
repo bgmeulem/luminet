@@ -5,16 +5,12 @@
 version: 2
 
 sphinx:
-  # Path to your Sphinx configuration file.
   configuration: docs/source/conf.py
 
-# Set the OS, Python version, and other tools you might need
 build:
   os: ubuntu-24.04
   tools:
     python: "3.13"
-
-
 
 python:
   install:
