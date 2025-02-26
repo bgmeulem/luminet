@@ -1,23 +1,23 @@
 <div align="center">
   
 # Luminet
-![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![release](https://img.shields.io/github/v/tag/bgmeulem/Luminet?include_prereleases&label=release&style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square) [![Documentation Status](https://readthedocs.org/projects/luminet/badge/?version=latest&style=flat-square)](https://luminet.readthedocs.io/en/latest/?badge=latest)
+![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) [![PyPI-badge](https://img.shields.io/pypi/v/luminet?pypiBaseUrl=https%3A%2F%2Fpypi.org&style=flat-square&logo=pypi&link=https%3A%2F%2Fpypi.org%2Fproject%2Fluminet%2F)](https://pypi.org/project/luminet) [![Documentation Status](https://readthedocs.org/projects/luminet/badge/?version=latest&style=flat-square)](https://luminet.readthedocs.io/en/latest/?badge=latest) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square)
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
 ![Example plot of a black hole](https://raw.githubusercontent.com/bgmeulem/luminet/master/assets/bh_plot.png)
 </div>
 
-## :zap: Install
+## ⚡ Install
 `luminet` is available from PyPI:
 
 ```shell
 pip install luminet
 ```
 
-## :book: [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
+## 📖 [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
 
-## :nut_and_bolt: Usage
+## 🔩 Usage
 
 All variables in this repo are in natural units: $G=c=1$
 
@@ -46,7 +46,7 @@ radius  alpha   impact_parameter    z_factor    flux_o
 Note that sampling is biased towards the center of the black hole, since this is where most of the luminosity comes from.
 
 
-## :memo: Background
+## 📝 Background
 Swarzschild black holes have an innermost stable orbit of $6M$, and a photon sphere at $3M$. This means that
 the accretion disk orbiting the black hole emits photons at radii $r>6M$. As long as the photon perigee in curved space remains larger than $3M$ (also called the photon sphere), the photon is not captured by the black hole and can in theory be seen from some observer frame $(b, \alpha)$. The spacetime curvature is most easily interpreted as a lensing effect between the black hole frame $(r, \alpha)$ and the observer frame $(b, \alpha)$. The former are 2D polar coordinates that span the accretion disk area, and the latter are 2D polar coordinates that span the "photographic plate" of the observer frame. Think of the latter as a literal CCD camera. The photon orbit perigee and the radius in observer frame $b$ are directly related:
 
@@ -77,7 +77,7 @@ These ghost photons are what you see on the lower half of the image above, as we
 
 This repo uses `scipy.optimize.brentq` to solve these equations, and provides convenient API to the concepts presented in Luminet (1979). The `BlackHole` class is the most obvious one, but it's also educative to play around with e.g. the `Isoradial` class: lines in observer frame describing photons emitted from the same radius in the black hole frame. The `Isoredshift` class provides lines of equal redshift in the observer frame.
 
-## :closed_book: Bibliography
+## 📕 Bibliography
 [1] Luminet, J.-P., [“Image of a spherical black hole with thin accretion disk.”](https://ui.adsabs.harvard.edu/abs/1979A%26A....75..228L/abstract), <i>Astronomy and Astrophysics</i>, vol. 75, pp. 228–235, 1979.
 
 [2] J.-P. Luminet, [“An Illustrated History of Black Hole Imaging : Personal Recollections (1972-2002).”](https://arxiv.org/abs/1902.11196) arXiv, 2019. doi: 10.48550/ARXIV.1902.11196. 
