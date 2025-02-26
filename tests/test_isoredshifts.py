@@ -17,7 +17,7 @@ def test_isoredshifts(incl):
     try:
         zs = [-.1, 0, .2]
         ax = bh.plot_isoredshifts(zs, c="white")
-        plt.show()  # Uncomment to see the plot
+        # plt.show()  # Uncomment to see the plot
     except AssertionError as e:
         raise ValueError("Failed for incl={}".format(incl)) from e
     return None
