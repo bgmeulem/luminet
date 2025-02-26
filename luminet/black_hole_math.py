@@ -396,7 +396,7 @@ def solve_for_perigee(
     return periastron
 
 
-def calc_impact_parameter(
+def solve_for_impact_parameter(
     radius,
     incl,
     alpha,

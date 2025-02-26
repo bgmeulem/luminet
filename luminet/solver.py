@@ -8,6 +8,7 @@ from typing import Callable, Dict
 
 import numpy as np
 import scipy.optimize as opt
+from scipy.interpolate import interp1d
 
 
 def improve_solutions(
@@ -38,18 +39,22 @@ def improve_solutions(
     return x
 
 
-def fmin_2d(
+def root_2d(
     func: Callable,
     x0: np.ndarray,
-    args: tuple,
-    xtol: float = 1e-6,
-    ftol: float = 1e-6,
-    maxiter: int = 200,
+    args: tuple = (),
+    method: str = 'hybr',
+    tol: float = 1e-6,
 ):
     """
-    Find the minimum of a function of two variables.
+    Find the root of a function of two variables.
 
     :meta private:
     """
-    res = opt.fmin(func, x0, args=args, xtol=xtol, ftol=ftol, maxiter=maxiter)
-    return res.xopt
+    res = opt.root(func, x0, args=args, method=method, tol=tol)
+    if not res.success:
+        return np.array([np.nan, np.nan])
+    return res.x
+
+def interpolator(x, y):
+    return interp1d(x, y, kind="cubic")

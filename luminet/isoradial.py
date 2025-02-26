@@ -13,8 +13,9 @@ from matplotlib.axes import Axes
 import numpy as np
 
 from luminet import black_hole_math as bhmath
-from luminet.solver import improve_solutions
+from luminet.solver import improve_solutions, interpolator
 from luminet.viz import colorline
+from luminet.transform import polar_to_cartesian
 
 
 class Isoradial:
@@ -80,7 +81,7 @@ class Isoradial:
         impact_parameters = []
         t = np.linspace(0, 2 * np.pi, self.params["angular_precision"])
         for alpha in t:
-            b = bhmath.calc_impact_parameter(
+            b = bhmath.solve_for_impact_parameter(
                 radius=self.radius,
                 incl=self.incl,
                 alpha=alpha,
@@ -164,7 +165,7 @@ class Isoradial:
             angle = np.asarray(angle)
             return np.vectorize(find_closest_radii, otypes=[float])(angle)
 
-    def calc_b_from_angle(self, angle: float):
+    def solve_for_b_from_angle(self, angle: float):
         r"""Calculate the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
         
         This method solves for the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
@@ -175,7 +176,7 @@ class Isoradial:
         Returns:
             float: The impact parameter :math:`b` for the given angle :math:`\alpha`.
         """
-        b = bhmath.calc_impact_parameter(
+        b = bhmath.solve_for_impact_parameter(
             radius=self.radius,
             incl=self.incl,
             alpha=angle,
@@ -220,7 +221,12 @@ class Isoradial:
             Tuple[np.ndarray]: 2-tuple containing the angles and radii for the redshift value.
                 In general, either two or zero solutions exist.
         """
-
+        # Find all zero crossings
+        angles = np.linspace(0, 2 * np.pi, 100)
+        impact_parameters = [self.solve_for_b_from_angle(angle) for angle in angles]
+        b_interp = interpolator(angles, impact_parameters)
+        
+        # function to solve for
         func = (
             lambda angle: redshift
             + 1
@@ -229,12 +235,10 @@ class Isoradial:
                 angle,
                 self.incl,
                 self.bh_mass,
-                self.calc_b_from_angle(angle),
+                b_interp(angle),
             )
         )
 
-        # Find all zero crossings
-        angles = np.linspace(0, 2 * np.pi, 1000)
         values = [func(angle) for angle in angles]
         sign_changes = np.where(np.diff(np.sign(values)))[0]
 
@@ -242,20 +246,22 @@ class Isoradial:
         for idx in sign_changes:
             # Find the root of the function in the interval
             angle0, angle1 = angles[idx], angles[idx + 1]
-            y0, y1 = values[idx], values[idx + 1]
+            z0, z1 = values[idx], values[idx + 1]
             try:
-                root = improve_solutions(func, (angle0, angle1), (y0, y1), kwargs={})
-                if y0 < 0 and y1 > 0:
-                    solutions[0] = root  # Negative to positive
-                elif y0 > 0 and y1 < 0:
-                    solutions[1] = root  # Positive to negative
+                angle = improve_solutions(func, (angle0, angle1), (z0, z1), kwargs={})
+                # split solutions based on their angle: useful for plotting later on
+                y_value = polar_to_cartesian(angle, b_interp(angle))[1]
+                if z0 < 0:
+                    solutions[0] = angle
+                elif z1 < 0:
+                    solutions[1] = angle
             except Exception as e:
                 # If brentq fails to find a root in the interval, skip it
                 pass
 
         # Calculate corresponding b values for the found angles
         b_values = [
-            self.calc_b_from_angle(angle) if angle is not None else None
+            self.solve_for_b_from_angle(angle) if angle is not None else None
             for angle in solutions
         ]
 
