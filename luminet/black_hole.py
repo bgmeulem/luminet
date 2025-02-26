@@ -368,7 +368,7 @@ def sample_photon(min_r, max_r, incl, bh_mass, n):
 
     # Bias sampling towards circle center (even sampling would be sqrt(random))
     r = min_r + (max_r - min_r) * np.random.random()
-    b = bhmath.calc_impact_parameter(r, incl, alpha, bh_mass, n)
+    b = bhmath.solve_for_impact_parameter(r, incl, alpha, bh_mass, n)
     assert (
         b is not np.nan
     ), f"b is nan for r={r}, alpha={alpha}, incl={incl}, M={bh_mass}, n={n}"

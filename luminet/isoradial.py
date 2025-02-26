@@ -15,6 +15,7 @@ import numpy as np
 from luminet import black_hole_math as bhmath
 from luminet.solver import improve_solutions
 from luminet.viz import colorline
+from luminet.transform import polar_to_cartesian
 
 
 class Isoradial:
@@ -80,7 +81,7 @@ class Isoradial:
         impact_parameters = []
         t = np.linspace(0, 2 * np.pi, self.params["angular_precision"])
         for alpha in t:
-            b = bhmath.calc_impact_parameter(
+            b = bhmath.solve_for_impact_parameter(
                 radius=self.radius,
                 incl=self.incl,
                 alpha=alpha,
@@ -164,7 +165,7 @@ class Isoradial:
             angle = np.asarray(angle)
             return np.vectorize(find_closest_radii, otypes=[float])(angle)
 
-    def calc_b_from_angle(self, angle: float):
+    def solve_for_b_from_angle(self, angle: float):
         r"""Calculate the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
         
         This method solves for the impact parameter :math:`b` for a given angle :math:`\alpha` on the isoradial.
@@ -175,7 +176,7 @@ class Isoradial:
         Returns:
             float: The impact parameter :math:`b` for the given angle :math:`\alpha`.
         """
-        b = bhmath.calc_impact_parameter(
+        b = bhmath.solve_for_impact_parameter(
             radius=self.radius,
             incl=self.incl,
             alpha=angle,
@@ -255,7 +256,7 @@ class Isoradial:
 
         # Calculate corresponding b values for the found angles
         b_values = [
-            self.calc_b_from_angle(angle) if angle is not None else None
+            self.solve_for_b_from_angle(angle) if angle is not None else None
             for angle in solutions
         ]
 
