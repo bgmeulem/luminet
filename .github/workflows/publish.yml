@@ -88,7 +88,7 @@ jobs:
         if: always()
         with:
           name: conda
-          path: *.conda
+          path: "*.conda"
           if-no-files-found: error
 
   conda_publish:
