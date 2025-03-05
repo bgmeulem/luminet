@@ -61,8 +61,7 @@ jobs:
           auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
       - name: Install package
         run: |
-          pixi add pip
-          pixi r python -m pip install dist/*.whl
+          pixi r -e build python -m pip install dist/*.whl
       - name: Import package
         run: pixi r python -c "import $PACKAGE; print($PACKAGE._version.__version__)"
 
