@@ -11,6 +11,10 @@ on:
 env:
   PACKAGE: "luminet"
   PYTHON_VERSION: "3.8"
+  
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   waiting_room:
