@@ -131,8 +131,8 @@ jobs:
       - name: conda dev upload
         if: contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')
         run: |
-          anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --user bgmeulem --label=dev $CONDA_FILE
+          anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --skip-existing --user bgmeulem --label=dev $CONDA_FILE
       - name: conda main upload
         if: (!(contains(env.TAG, 'a') || contains(env.TAG, 'b') || contains(env.TAG, 'rc')))
         run: |
-          anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --user bgmeulem --label=dev --label=main $CONDA_FILE
+          anaconda --token ${{ secrets.ANACONDA_TOKEN }} upload --skip-existing --user bgmeulem --label=dev --label=main $CONDA_FILE
