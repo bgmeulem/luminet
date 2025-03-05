@@ -87,3 +87,4 @@ sphinx-paramlinks = ">=0.6.0, <0.7"
 
 [tool.pixi.feature.build.dependencies]
 twine = "*"
+pip = ">=25.0.1,<26"
