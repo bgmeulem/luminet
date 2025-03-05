@@ -63,7 +63,7 @@ jobs:
         run: |
           pixi r -e build python -m pip install dist/*.whl
       - name: Import package
-        run: pixi r python -c "import $PACKAGE; print($PACKAGE._version.__version__)"
+        run: pixi r python -c "import $PACKAGE; print($PACKAGE.__version__)"
 
   pip_publish:
     name: Publish to PyPI
