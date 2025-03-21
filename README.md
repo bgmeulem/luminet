@@ -69,7 +69,7 @@ Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ and
 
 $$\cos(\gamma) = \frac{\cos(\alpha)}{\sqrt{\cos^2\alpha + \cot^2\theta_0}}$$
 
-In curved spacetime, there is usually more than one photon orbit that originates from the accretion disk, and arrives at the observer frame. Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
+In curved spacetime, there are usually multiple photon orbits that originate from the same coordinate and project to the ibserver frame (see e.g. gravitational lensing and Einstein crosses). Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
 
 $$2n\pi - \gamma = 2\sqrt{\frac{Q}{P}} \left( 2K(k) - F(\zeta_\infty, k) - F(\zeta_r, k)  \right)$$
 
