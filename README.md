@@ -22,22 +22,25 @@ pip install luminet
 All variables in this repo are in natural units: $G=c=1$
 
 ```python
->>> from luminet.black_hole import BlackHole
->>> bh = BlackHole(
-...     mass=1,
-...     incl=1.5,           # inclination in radians
-...     acc=1,              # accretion rate
-...     outer_edge=40)
+from luminet.black_hole import BlackHole
+bh = BlackHole(
+    mass=1,
+    incl=1.5,           # inclination in radians
+    acc=1,              # accretion rate
+    outer_edge=40
+)
 ```
 To create an image:
 ```python
->>> ax = bh.plot()          # Create image like above
+ax = bh.plot()          # Create image like above
 ```
 
 To sample photons on the accretion disk:
 ```python
->>> bh.sample_photons(100)
->>> bh.photons
+bh.sample_photons(100)
+bh.photons
+```
+```
 radius  alpha   impact_parameter    z_factor    flux_o
 10.2146 5.1946  1.8935              1.1290      1.8596e-05
 ... (99 more)
