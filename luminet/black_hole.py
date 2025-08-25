@@ -181,7 +181,9 @@ class BlackHole:
         redshifts = [z for z in redshifts if z not in [irz.redshift for irz in self.isoredshifts]]
 
         radii = np.linspace(self.disk_inner_edge, self.disk_outer_edge, self.radial_resolution)
-        self.calc_isoradials(direct_r=radii, ghost_r=[])
+        if order == 0: self.calc_isoradials(direct_r=radii, ghost_r=[])
+        elif order == 1: self.calc_isoradials(direct_r=[], ghost_r=radii)
+        else: raise ValueError("Orders other than 0 (direct) or 1 (ghost) are not supported yet.")
 
         for z in redshifts: self._calc_isoredshift(z, order=order)
 
@@ -306,7 +308,7 @@ class BlackHole:
         ax = self.plot_isoradials(direct_r=radii, ghost_r=radii, color_by="flux", **kwargs)
         return ax
 
-    def plot_isoredshifts(self, redshifts=None, order=0, **kwargs):
+    def plot_isoredshifts(self, redshifts=None, order=0, ax=None, **kwargs):
         """Plot isoredshifts for a list of redshift values
 
         Args:
@@ -317,12 +319,12 @@ class BlackHole:
             :py:class:`~matplotlib.axes.Axes`: The axis with the isoredshifts plotted.
         """
         self.calc_isoredshifts(redshifts=redshifts, order=order)
-        fig, ax = self._get_fig_ax()
+        if ax is None: fig, ax = self._get_fig_ax()
         for isoredshift in self.isoredshifts:
             ax = isoredshift.plot(ax, **kwargs)
         return ax
     
-    def plot_isofluxlines(self, mask_inner=True, normalize=True, order=0, **kwargs):
+    def plot_isofluxlines(self, mask_inner=True, normalize=True, order=0, ax=None, **kwargs):
         """Plot lines of equal flux.
 
         Args:
@@ -360,7 +362,7 @@ class BlackHole:
             ])
         if normalize: zs /= self.max_flux
 
-        fig, ax = self._get_fig_ax()
+        if ax is None: fig, ax = self._get_fig_ax()
         contour = plt.tricontour(
             a, b, zs, 
             **kwargs
