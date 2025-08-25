@@ -28,7 +28,7 @@ class Isoradial:
         bh_mass: float,
         order: int = 0,
         acc: float | None = None,
-        params: Dict | None = None,
+        angular_resolution: int | None = None,
     ):
         r"""
         Args:
@@ -42,8 +42,8 @@ class Isoradial:
                 :math:`1` to the first-order image i.e. "ghost" image.
                 Default is :math:`0`.
             acc (float): Accretion rate of the black hole. Default is None.
-            params (Dict): Additional parameters for the isoradial calculation.
-                Default is None.
+            angular_resolution (int): Amount of :math:`\alpha` subdivisions for each isoradial.
+                Default is 100.
         """
         assert (
             radius >= 6.0 * bh_mass
@@ -56,12 +56,12 @@ class Isoradial:
         self.radius = radius
         self.order = order
         self.acc = acc
-        self.params = params if params is not None else {"angular_precision": 100}
+        self.angular_resolution = angular_resolution if angular_resolution is not None else 100
 
-        self.radii_b = []
-        """np.ndarray: Radii of the isoradial in the observer plane :math:`b`."""
+        self.impact_parameters = []
+        """np.ndarray: Radial coordinate of the isoradial in the observer plane :math:`b`."""
         self.angles = []
-        r"""np.ndarray: Angles of the isoradial in black hole / observer frame :math:`\alpha`."""
+        r"""np.ndarray: Angular coordinate of the isoradial (in both black hole and observer frame) :math:`\alpha`."""
         self.redshift_factors = None
         """np.ndarray: Redshift factors of the isoradial :math:`(1 + z)`."""
 
@@ -79,7 +79,7 @@ class Isoradial:
 
         angles = []
         impact_parameters = []
-        t = np.linspace(0, 2 * np.pi, self.params["angular_precision"])
+        t = np.linspace(0, 2 * np.pi, self.angular_resolution)
         for alpha in t:
             b = bhmath.solve_for_impact_parameter(
                 radius=self.radius,
@@ -101,7 +101,7 @@ class Isoradial:
 
         # flip image if necessary
         self.angles = np.array(angles)
-        self.radii_b = np.array(impact_parameters)
+        self.impact_parameters = np.array(impact_parameters)
         return angles, impact_parameters
 
     def calc_redshift_factors(self):
@@ -117,7 +117,7 @@ class Isoradial:
             angle=self.angles,
             incl=self.incl,
             bh_mass=self.bh_mass,
-            b=self.radii_b,
+            b=self.impact_parameters,
         )
         self.redshift_factors = np.array(redshift_factors)
         return redshift_factors
@@ -153,7 +153,7 @@ class Isoradial:
 
         """
         angles_array = np.array(self.angles)
-        radii_b_array = np.array(self.radii_b)
+        radii_b_array = np.array(self.impact_parameters)
 
         def find_closest_radii(ang):
             indices = np.argmin(np.abs(angles_array - ang), axis=-1)
@@ -185,22 +185,28 @@ class Isoradial:
         )
         return b
 
-    def plot(self, ax: Axes, z, cmap, norm, **kwargs):
+    def plot(self, ax: Axes, z=None, cmap=None, norm=None, **kwargs):
         """Plot the isoradial.
 
         Args:
             ax (:py:class:`~matplotlib.axes.Axes`): The axis on which the isoradial should be plotted
-            z (array-like): The color values to be used.
-            cmap (str): The colormap to be used. Must be a valid matplotlib colormap string.
-            norm (tuple): The normalization to be used.
+            z (array-like, optional): The color values to be used. if no color values are passed, the isoradial is plotted as-is.
+            cmap (str, optional): The colormap to be used. Only used if ``z`` is not None. Must be a valid matplotlib colormap string. Default is "Greys_r"
+            norm (tuple, optional): The normalization to be used. Default is min-max of z, if passed.
             **kwargs: Additional arguments to be passed to the colorline function
 
         Returns:
             :py:class:`~matplotlib.axes.Axes`: The axis with the isoradial plotted.
         """
-        ax = colorline(
-            ax, self.angles, self.radii_b, z=z, cmap=cmap, norm=norm, **kwargs
-        )
+
+        if z is None:
+            ax = ax.plot(self.angles, self.impact_parameters, **kwargs)
+        else:
+            norm = norm or (min(z), max(z))
+            cmap = cmap or "Greys_r"
+            ax = colorline(
+                ax, self.angles, self.impact_parameters, z=z, cmap=cmap, norm=norm, **kwargs
+            )
 
         return ax
 

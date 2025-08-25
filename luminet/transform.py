@@ -1,6 +1,7 @@
 """Convert cartesian to polar coordinates and back."""
 
 import numpy as np
+from scipy.spatial.distance import pdist
 
 def polar_to_cartesian(th, radius, rotation=0):
     """Convert polar to cartesian coordinates.
@@ -30,3 +31,6 @@ def cartesian_to_polar(x, y):
     R = np.hypot(x, y)
     th = np.arctan2(y, x) % (2*np.pi)
     return th, R
+
+def polar_cartesian_distance(p1, p2):
+    return pdist((p1, p2))[0]
