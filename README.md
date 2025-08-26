@@ -5,15 +5,26 @@
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
-![Example plot of a black hole](https://raw.githubusercontent.com/bgmeulem/luminet/master/assets/bh_plot.png)
+![Example plot of a black hole](docs/_static/_images/bh.png)
+<div style="display:flex">
+     <div style="flex:1;padding-right:10px;">
+          <img src="docs/_static/_images/isoradials.png" width="200"/>
+     </div>
+     <div style="flex:1;padding-left:10px;">
+          <img src="docs/_static/_images/isoredshifts.png" width="300"/>
+     </div>
+     <div style="flex:1;padding-left:10px;">
+          <img src="docs/_static/_images/isofluxlines.png" width="400"/>
+     </div>
+</div>
 </div>
 
 ## ⚡ Install
-`luminet` is available from PyPI:
-
+`luminet` is available from [PyPI](https://pypi.org/project/luminet/) and [Anaconda](https://anaconda.org/bgmeulem/luminet):
 ```shell
-pip install luminet
+pixi add --pypi luminet
 ```
+
 
 ## 📖 [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
 
@@ -25,7 +36,7 @@ All variables in this repo are in natural units: $G=c=1$
 from luminet.black_hole import BlackHole
 bh = BlackHole(
     mass=1,
-    incl=1.5,           # inclination in radians
+    incl=1.4,           # inclination in radians
     acc=1,              # accretion rate
     outer_edge=40
 )
