@@ -8,9 +8,9 @@ from scipy.spatial.distance import pdist
 from typing import Tuple
 
 def polar_to_cartesian(
-        th: float | np.array, 
-        radius: float | np.array, 
-        rotation : float = 0) -> float | np.array:
+        th: float | np.ndarray, 
+        radius: float | np.ndarray, 
+        rotation : float = 0) -> float | np.ndarray:
     """Convert polar to cartesian coordinates.
     
     Args:
@@ -26,7 +26,7 @@ def polar_to_cartesian(
     return x, y
 
 
-def cartesian_to_polar(x: float | np.array, y: float | np.array) -> float | np.array:
+def cartesian_to_polar(x: float | np.ndarray, y: float | np.ndarray) -> float | np.ndarray:
     """Convert cartesian to polar coordinates.
 
     Args:
