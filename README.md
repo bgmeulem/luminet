@@ -6,6 +6,7 @@
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
 ![Example plot of a black hole](docs/_static/_images/bh.png)
+</div>
 <div style="display:flex">
      <div style="flex:1;padding-right:10px;">
           <img src="docs/_static/_images/isoradials.png" width="200"/>
@@ -16,7 +17,6 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
      <div style="flex:1;padding-left:10px;">
           <img src="docs/_static/_images/isofluxlines.png" width="200"/>
      </div>
-</div>
 </div>
 
 ## ⚡ Install
