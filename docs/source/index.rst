@@ -1,8 +1,6 @@
 Contents
 --------
 
-.. toctree::
-   :maxdepth: 1
+.. include:: api_reference.rst
 
-   api_reference
-   bibliography
+.. include:: bibliography.rst

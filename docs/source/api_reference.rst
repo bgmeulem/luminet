@@ -8,7 +8,7 @@ API reference
    autoapi/luminet/black_hole_math/index
    autoapi/luminet/isoradial/index
    autoapi/luminet/isoredshift/index
-   autoapi/luminet/transform/index
+   autoapi/luminet/spatial/index
    autoapi/luminet/viz/index
    autoapi/luminet/solver/index
 
@@ -18,6 +18,6 @@ API reference
    luminet.black_hole_math
    luminet.isoradial
    luminet.isoredshift
-   luminet.transform
+   luminet.spatial
    luminet.viz
    luminet.solver
