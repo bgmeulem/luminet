@@ -26,7 +26,7 @@ Submodules
    :maxdepth: 1
 
             {% for submodule in visible_submodules %}
-   {{ submodule.include_path }}
+   {{ submodule.id.split('.') | last }} <{{ submodule.include_path }}>
             {% endfor %}
 
 
