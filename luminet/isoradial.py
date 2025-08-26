@@ -161,11 +161,11 @@ class Isoradial:
             float | :class:`~numpy.ndarray`: The impact parameter :math:`b` for the given angle :math:`\alpha`.
         """
         angles_array = np.array(self.angles)
-        radii_b_array = np.array(self.impact_parameters)
+        impact_parameters_array = np.array(self.impact_parameters)
 
         def find_closest_radii(ang):
             indices = np.argmin(np.abs(angles_array - ang), axis=-1)
-            return radii_b_array[indices]
+            return impact_parameters_array[indices]
 
         if isinstance(angle, (float, int)):
             return find_closest_radii(angle)
