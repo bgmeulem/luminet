@@ -1,6 +1,6 @@
 """Scipy solvers.
 
-This module provides wrappers to scipy solvers.
+This module provides light wrappers to scipy solvers.
 """
 
 from functools import partial

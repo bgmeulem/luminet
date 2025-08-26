@@ -1,21 +1,23 @@
 """Lines of equal redshift in the observer plane"""
 
 import numpy as np
-from typing import List
-from luminet.isoradial import Isoradial
-from luminet.transform import polar_cartesian_distance
+from luminet.spatial import polar_cartesian_distance
 import logging
 logger = logging.getLogger(__name__)
 
 
 class Isoredshift:
-    """Dataclass to store and visualize lines of equal redshift in the observer plane.
+    """Leightwieght dataclass to store and visualize lines of equal redshift in the observer plane.
+
+    This class is rarely initialized by the user. It is however often used by the :class:`~luminet.black_hole.BlackHole`
+    class to handle isoredshifts.
+
+    Isoredshift lines usually have two solutions, more or less in each hemisphere of the observer plane.
+    A notable exception is closed isoredshifts, which will have only a single solution at the tip.
     """
     def __init__(
         self,
-        incl,
         redshift,
-        bh_mass,
         order = 0,
         angles = None,
         impact_parameters = None,
@@ -23,14 +25,10 @@ class Isoredshift:
     ):
         """
         Args:
-            inclination (float): inclination angle of the observer
+            incl (float): Inclination angle of the observer
             redshift (float): redshift value
             bh_mass (float): mass of the black hole
         """
-        self.incl = incl
-        """float: inclination angle of the observer"""
-        self.bh_mass = bh_mass
-        """float: mass of the black hole"""
         self.redshift = redshift
         """float: redshift value"""
         self.order = order
@@ -125,7 +123,12 @@ class Isoredshift:
         self.impact_parameters = np.array([*self.impact_parameters[0], *self.impact_parameters[1][::-1]]), np.array([])
     
     def plot(self, ax, **kwargs):
-        """Plot the isoredshift on an ax"""
+        """Plot the isoredshift on an ax
+        
+        Args:
+            ax (:class:`matplotlib.axes.Axes`): Ax object to plot on.
+            kwargs (optional): Optional keyword arguments to pass to :func:`matplotlib.pyplot.plot`
+        """
         if self._is_close(): self._join()
         for n in range(len(self.angles)):
             ax.plot(self.angles[n], self.impact_parameters[n], label=self.redshift, **kwargs)
