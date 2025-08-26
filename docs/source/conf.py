@@ -39,7 +39,7 @@ extensions = [
 ]
 
 
-autoapi_own_page_level = "class"
+autoapi_own_page_level = "method"
 autoapi_type = "python"
 autoapi_keep_files = True
 autoapi_add_toctree_entry = False  # we use a manual autosummary directive in api_reference.rst thats included in the toctree
@@ -54,6 +54,14 @@ autoapi_dirs = ['../../luminet']
 autoapi_template_dir = "../_templates"
 templates_dir = ["../_templates"]
 toc_object_entries_show_parents = 'hide'  # short toc entries
+
+default_domain = "python"
+intersphinx_mapping = {
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('https://matplotlib.org/stable/', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
+}
 
 
 # -- bibtex files ----------------------------------------------------------
