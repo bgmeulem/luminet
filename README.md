@@ -11,10 +11,10 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
           <img src="docs/_static/_images/isoradials.png" width="200"/>
      </div>
      <div style="flex:1;padding-left:10px;">
-          <img src="docs/_static/_images/isoredshifts.png" width="300"/>
+          <img src="docs/_static/_images/isoredshifts.png" width="200"/>
      </div>
      <div style="flex:1;padding-left:10px;">
-          <img src="docs/_static/_images/isofluxlines.png" width="400"/>
+          <img src="docs/_static/_images/isofluxlines.png" width="200"/>
      </div>
 </div>
 </div>
