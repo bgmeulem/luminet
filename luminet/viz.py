@@ -6,8 +6,6 @@ Provides convenience functions for plotting colored lines.
 import matplotlib.collections as mcoll
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import cm
-
 
 def make_segments(x, y):
     """
@@ -44,7 +42,7 @@ def colorline(ax, x, y, z, norm, cmap, linewidth=3, **kwargs):
         :class:`~matpltolib.axes.Axes`: Axes with plotted line.
 
     """
-    cmap = cm.get_cmap(cmap)
+    cmap = plt.get_cmap(cmap)
     norm = plt.Normalize(*norm)
     segments = make_segments(x, y)
     lc = mcoll.LineCollection(
