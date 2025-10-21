@@ -5,6 +5,8 @@
 [![Anaconda-Server Badge](https://anaconda.org/bgmeulem/luminet/badges/version.svg)](https://anaconda.org/bgmeulem/luminet)
  ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square)
 
+ > WARN: Values for flux are likely wrong. Debugging in process. overall shape and redshirt is correct though.
+
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
 <img src="docs/_static/_images/bh.png" width=460px>
