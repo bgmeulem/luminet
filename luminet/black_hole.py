@@ -566,4 +566,4 @@ def sample_photon(min_r, max_r, incl, bh_mass, n):
 
 def _call_calc_redshift_locations(ir, redshift):
     """Helper function for multiprocessing"""
-    return ir.calc_redshift_locations(redshift)
+    return ir.interpolate_redshift_locations(redshift)
