@@ -148,11 +148,13 @@ html_theme_options = {
     },
     "dark_css_variables": {
         "color-brand-primary": "#fefaee",  # Off-white
+        "color-foreground-primary": "#E6E1D4",
         "color-brand-content": "#FFB000",  # Gold instead of dark blue
         "color-sidebar-background": "#1A1C1E",
         "color-sidebar-item-background--hover": "#1e2124",
-        "color-link": "#FDD378",
-        "color-link--visited": "#a58abf"
+        "color-link": "#FFC23E",
+        "color-highlight-on-target": "#2D222B",
+        "color-link--visited": "#a58abf",
     },
 }
 
