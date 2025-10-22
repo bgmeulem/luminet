@@ -561,7 +561,7 @@ def calc_x0(bh_mass, a):
         :cite:t:`Page_1974` Equation 15k
 
     See also:
-        meth:`calc_innermost_orbit` for the calculation of :math:`r_{ms}`
+        :meth:`calc_innermost_orbit` for the calculation of :math:`r_{ms}`
     """
     rms = calc_innermost_stable_orbit(bh_mass, a)
     return np.sqrt(rms/bh_mass)
