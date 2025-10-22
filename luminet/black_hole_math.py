@@ -467,7 +467,101 @@ def ellipse(r, a, incl) -> float:
     return minor_axis / np.sqrt((1 - (eccentricity * np.cos(a)) ** 2))
 
 
-def calc_flux_intrinsic(r, acc, bh_mass):
+def calc_Z1(bh_mass, a):
+    """Calculate :math:`Z1` for Kerr black holes.
+
+    See also:
+     :cite:t:`Page_1974` Equation 15l
+    """
+    a_ = a/bh_mass
+    return 1 + (1-a_**2)**(1/3)*((1+a_)**(1/3) + (1 - a_)**(1/3))
+
+def calc_Z2(bh_mass, a):
+    """Calculate :math:`Z2`
+
+    See also:
+        :cite:t:`Page_1974` Equation 15m
+    """
+    Z1 = calc_Z1(bh_mass, a)
+    a_ = a/bh_mass
+    return np.sqrt(3*a_**2 + Z1**2)
+
+
+def calc_innermost_orbit(bh_mass, a):
+    """Calculcate the innermost orbit :math:`r_{ms}` for a Kerr black hole.
+
+    A larger angular momentum :math:`a` will yield innermost orbits closer to the black hole.
+
+    See also:
+        :cite:t:`Page_1974`
+    """
+    Z1 = calc_Z1(bh_mass, a)
+    Z2 = calc_Z2(bh_mass, a)
+    a_ = a/bh_mass
+    return bh_mass*(
+        3 + Z2 - np.sign(a_)*((3-Z1)*(3+Z1+2*Z2))**.5
+    )
+
+def calc_x0(bh_mass, a):
+    r"""Calculcate :math:`x_0` for Kerr black holes.
+
+    .. math::
+
+       x_0 = \sqrt{\frac{r_{ms}}/{M}}
+
+    
+    See also:
+        :cite:t:`Page_1974` Equation 15k
+    """
+    rms = calc_innermost_orbit(bh_mass, a)
+    return np.sqrt(rms/bh_mass)
+
+
+def calc_f_kerr(bh_mass, a, r):
+    r"""Calculate the :math:`f`-function from :cite:t:`Page_1974` (Equation 12)
+
+    The :math:`f`-function is used when calculating the relationship between intrinsic flux and radius for an accretion disk:
+
+    .. math::
+
+       F_s(r) = \frac{\dot{M}_0}{4\pi}e^{-(\nu + \psi + \mu)}f
+
+    Here, :math:`nu`, :math:`psi` and :math:`mu` are metric coefficients (functions of r), including Kerr metric. :math:`\dot{M}_0` is the radius-independent, time-averaged rate at which mass flows inward. Defining the innermost stable orbit as :math:`r_{ms}`, :math:`x=\sqrt{r/M}`, :math:`x_0=\sqrt{r_{ms}/M}` and :math:`a^*=a/M`, the :math:`f`-function is defined as:
+
+    .. math::
+
+       \begin{align*}
+        f = &\frac{3}{2M}\frac{1}{x^2(x^3 - 3x + 2a^*)}\Bigg[ x - x_0 - \frac{3}{2}a^*\ln\left(\frac{x}{x_0}\right) \\
+         &- \frac{3(x_1 - a^*)^2}{x_1(x_1-x_2)(x_1-x_3)}\ln\left(\frac{x-x_1}{x_0-x_1}\right) \\
+         &- \frac{3(x_2 - a^*)^2}{x_2(x_2-x_1)(x_2-x_3)}\ln\left(\frac{x-x_2}{x_0-x_2}\right) \\
+         &- \frac{3(x_3 - a^*)^2}{x_3(x_3-x_1)(x_3-x_2)}\ln\left(\frac{x-x_3}{x_0-x_3}\right) \Bigg]
+        \end{align*}
+
+    """
+    a_ = a/bh_mass
+    x = np.sqrt(r/bh_mass)
+    x0 = calc_x0(bh_mass, a)
+    x1 =  2*np.cos(np.arccos(a_)/3 - np.pi/3)
+    x2 =  2*np.cos(np.arccos(a_)/3 + np.pi/3)
+    x3 = -2*np.cos(np.arccos(a_)/3)
+    A = 3 * (2*bh_mass)**-1 * (x**2 * (x**3 - 3*x + 2*a_))**-1
+    f = A * (
+        x - x0 - 1.5*a_*np.log(x/x0)
+        - 3*(x1-a_)**2 * np.log((x-x1)/(x0-x1)) / (x1*(x1-x2)*(x1-x3))
+        - 3*(x2-a_)**2 * np.log((x-x2)/(x0-x2)) / (x2*(x2-x1)*(x2-x3))
+        - 3*(x3-a_)**2 * np.log((x-x3)/(x0-x3)) / (x3*(x3-x1)*(x3-x2))
+    )
+    return f
+
+
+def calc_flux_intrinsic_kerr(bh_mass, a, r, acc):
+    """Calculate the intrinsic flux of the accretion disk of a Kerr black hole, in function of the accretion rate, specific angular momentum, and radius of emission."""
+    f = calc_f_kerr(bh_mass=bh_mass, a=a, r=r)
+    exp_nupsimu = r
+    return acc * f / exp_nupsimu / 4 / np.pi
+
+
+def calc_flux_intrinsic_swarzschild(bh_mass, r, acc):
     r"""Calculate the intrinsic flux of a photon.
     
     The intrinsic flux is not redshift-corrected. Observed photons will have a flux
@@ -475,8 +569,9 @@ def calc_flux_intrinsic(r, acc, bh_mass):
 
     .. math::
 
-        F_s = \frac{3 M \dot{M}}{8 \pi (r - 3) r^{2.5}} \left( \sqrt{r} - \sqrt{6} + \frac{1}{\sqrt{3}} \log \left( \frac{\sqrt{r} + \sqrt{3}}{\sqrt{6} + \sqrt{3}} \right) \right)
+        F_s = \frac{3 M \dot{M}}{8 \pi (r^* - 3) r^{5/2}} \left( \sqrt{r^*} - \sqrt{6} + \frac{1}{\sqrt{3}} \log \left( \frac{(\sqrt{r^*} + \sqrt{3})(\sqrt{6}-\sqrt{3})}{(\sqrt{6} + \sqrt{3})(\sqrt{r^*}-\sqrt{3})} \right) \right)
 
+    where :math:`r^*=r/M`
     Args:
         r (float): radius on the accretion disk (BH frame)
         acc (float): accretion rate
@@ -484,16 +579,14 @@ def calc_flux_intrinsic(r, acc, bh_mass):
 
     Returns:
         float: Intrinsic flux of the photon :math:`F_s`
+
+    Attention:
+        :cite:t:`Luminet_1979` has a mistake in Equation 15. The factor in fromt of the :math:`log` should be :math:`\sqrt{3}/2` instead of :math:`sqrt{3}/3`. This can be verified (tediously) by solving :cite:t:`Page_1974` Equation 15n.
     """
     r_ = r / bh_mass
-    log_arg = ((np.sqrt(r_) + np.sqrt(3)) * (np.sqrt(6) - np.sqrt(3))) / (
-        (np.sqrt(r_) - np.sqrt(3)) * (np.sqrt(6) + np.sqrt(3))
-    )
-    f = (
-        (3.0 * bh_mass * acc / (8 * np.pi))
-        * (1 / ((r_ - 3) * r**2.5))
-        * (np.sqrt(r_) - np.sqrt(6) + 3**-0.5 * np.log10(log_arg))
-    )
+    log_arg = (np.sqrt(r_) + np.sqrt(3)) * (np.sqrt(6) - np.sqrt(3)) / ((np.sqrt(r_) - np.sqrt(3)) * (np.sqrt(6) + np.sqrt(3)))
+    A = 3 * bh_mass * acc / (8 * np.pi)/ ((r_ - 3) * r_**2.5)
+    f = A * (np.sqrt(r_) - np.sqrt(6) + (np.sqrt(3)/2) * np.log(log_arg))
     return f
 
 
@@ -513,7 +606,7 @@ def calc_flux_observed(r, acc, bh_mass, redshift_factor):
     Returns:
         float: Observed flux of the photon :math:`F_o`
     """
-    flux_intr = calc_flux_intrinsic(r, acc, bh_mass)
+    flux_intr = calc_flux_intrinsic_swarzschild(r=r, acc=acc, bh_mass=bh_mass)
     flux_observed = flux_intr / redshift_factor**4
     return flux_observed
 
