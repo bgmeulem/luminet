@@ -93,3 +93,5 @@ This repo uses `scipy.optimize.brentq` to solve these equations, and provides co
 [1] Luminet, J.-P., [“Image of a spherical black hole with thin accretion disk.”](https://ui.adsabs.harvard.edu/abs/1979A%26A....75..228L/abstract), <i>Astronomy and Astrophysics</i>, vol. 75, pp. 228–235, 1979.
 
 [2] J.-P. Luminet, [“An Illustrated History of Black Hole Imaging : Personal Recollections (1972-2002).”](https://arxiv.org/abs/1902.11196) arXiv, 2019. doi: 10.48550/ARXIV.1902.11196. 
+
+[3] Don N Page and Kip S Thorne. [Disk-accretion onto a black hole. time-averaged structure of accretion disk.](https://ui.adsabs.harvard.edu/abs/1974ApJ...191..499P/abstract) Astrophys. J., 191:499, July 1974.
