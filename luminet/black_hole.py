@@ -270,9 +270,11 @@ class BlackHole:
 
         Example::
 
-        >>> direct_irs = [6, 10, 15, 20]
-        >>> ghost_irs = [6, 20, 50, 100]  # ghost_r can go to infinity
-        >>> ax = bh.plot_isoradials(direct_irs, ghost_irs, lw=1, colors='white')
+            from luminet.black_hole import BlackHole
+
+            direct_irs = [6, 10, 15, 20]
+            ghost_irs = [6, 20, 50, 100]  # ghost_r can go to infinity
+            ax = bh.plot_isoradials(direct_irs, ghost_irs, lw=1, colors='white')
 
         .. image:: /../_static/_images/isoradials.png
            :align: center
@@ -319,8 +321,10 @@ class BlackHole:
 
         Example::
 
-            >>> bh = BlackHole()
-            >>> bh.plot()
+            from luminet.black_hole import BlackHole
+
+            bh = BlackHole()
+            bh.plot()
 
         .. image:: /../_static/_images/bh.png
            :align: center
@@ -345,10 +349,12 @@ class BlackHole:
 
         Example::
 
-            >>> bh = BlackHole()
-            >>> redshifts = [-.2, -.1, 0., .1, .2, .3, .4]
-            >>> ax = bh.plot_isoredshifts(redshifts, c='white')
-            >>> ax = bh.disk_apparent_inner_edge.plot(ax=ax, c='white')
+            from luminet.black_hole import BlackHole
+
+            bh = BlackHole()
+            redshifts = [-.2, -.1, 0., .1, .2, .3, .4]
+            ax = bh.plot_isoredshifts(redshifts, c='white')
+            ax = bh.disk_apparent_inner_edge.plot(ax=ax, c='white')
 
         .. image:: /../_static/_images/isoredshifts.png
            :align: center
@@ -362,14 +368,17 @@ class BlackHole:
             ax = isoredshift.plot(ax, **kwargs)
         return ax
     
-    def plot_isofluxlines(self, mask_inner=True, normalize=True, order=0, ax=None, **kwargs) -> Axes:
+    def plot_isofluxlines(self, mask_inner=True, mask_outer=True, normalize=True, order=0, ax=None, **kwargs) -> Axes:
         """Plot lines of equal flux.
 
         Args:
             normalize (bool): Whether to normalize the fluxlines by the maximum flux or not. Defaults to True.
             mask_inner (bool): 
                 Whether to place a mask over the apparent inner edge, where the direct image produces no flux. 
-                Useful to mitigate matplotlib tricontour artifacts.
+                Useful to mitigate matplotlib tricontour artifacts. Default is ``True``
+            mask_outer (bool): 
+                Whether to place a mask over the apparent outer edge, where we are not capturing photons from.
+                Useful to mitigate matplotlib tricontour artifacts. Default is ``True``.
             order (int): The order of the image to plot siofluxlines for. Default is :math:`0`.
             ax (:class:`~matplotlib.axes.Axes`, optional): Axes object to plot on.
                 Useful for when you want to plot multiple things one a single canvas.
@@ -383,9 +392,11 @@ class BlackHole:
 
         Example::
 
-            >>> bh = BlackHole(incl=1.4, radial_resolution=200)
-            >>> levels = np.logspace(-1.3, 0, 10)
-            >>> ax = bh.plot_isofluxlines(colors='white', levels=levels, linewidths=1)
+            from luminet.black_hole import BlackHole
+
+            bh = BlackHole(incl=1.4, radial_resolution=200)
+            levels = [.05, .1, .15, .2, .25, .3, .6, .9, 1.2, 1.5, 1.8, 2.1]
+            ax = bh.plot_isofluxlines(colors='white', levels=levels, linewidths=1)
 
         .. image:: /../_static/_images/isofluxlines.png
            :align: center
@@ -423,6 +434,15 @@ class BlackHole:
                 self.disk_apparent_inner_edge.angles,
                 0, 
                 self.disk_apparent_inner_edge.impact_parameters,
+                color='k',
+                zorder=len(contour.levels) + 1
+                )
+        if mask_outer:
+            max_r = ax.get_ylim()[-1]
+            ax.fill_between(
+                self.disk_apparent_outer_edge.angles,
+                self.disk_apparent_outer_edge.impact_parameters,
+                max_r, 
                 color='k',
                 zorder=len(contour.levels) + 1
                 )
