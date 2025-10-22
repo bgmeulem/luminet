@@ -225,7 +225,7 @@ class Isoradial:
         """
         # TODO: math
 
-    def calc_redshift_locations(self, redshift):
+    def interpolate_redshift_locations(self, redshift):
         """Calculates which location on the isoradial has some redshift value (not redshift factor)
 
         In general, either two or zero solutions exist. 
