@@ -79,7 +79,7 @@ class BlackHole:
         """List[Isoredshift]: list of calculated isoredshifts"""
 
     def _calc_max_flux(self):
-        r"""Get the maximum flux emitted by the black hole
+        r"""Get the maximum intrinsic flux emitted by the black hole
         
         Max flux happens at radius ~ 9.55, which yields a max flux of:
         :math:`\frac{3M\dot{M}}{8\pi}*1.146*10^{-4}`.
@@ -87,7 +87,7 @@ class BlackHole:
         See also:
             Please refer to Eq15 in :cite:t:`Luminet_1979` for more info on this magic number.
         """
-        return 3 * self.mass * self.acc * 1.146e-4 / 8*np.pi
+        return 3 * self.mass * self.acc * 1.146e-4 / (8 * np.pi)
 
     def _calc_inner_isoradial(self, order=0):
         """Calculate the isoradial that defines the inner edge of the accretion disk"""
@@ -405,7 +405,11 @@ class BlackHole:
             flux 
             for ir in irs 
             for flux in bhmath.calc_flux_observed(
-                ir.radius, self.acc, self.mass, ir.redshift_factors)
+                r=ir.radius, 
+                acc=self.acc, 
+                bh_mass=self.mass, 
+                redshift_factor=ir.redshift_factors
+            )
             ])
         if normalize: zs /= self.max_flux
 
