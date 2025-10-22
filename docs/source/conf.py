@@ -60,7 +60,6 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/doc/stable/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('https://matplotlib.org/stable/', None),
-    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
 }
 
 
@@ -134,18 +133,26 @@ html_theme = "furo"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_static_path = ['../../assets']
+html_static_path = ['../../assets', '../../docs/_static/_images/']
 html_theme_options = {
-    "dark_logo": "bh_plot_dark.png",
-    "light_logo": "bh_plot_light.png",
+    "dark_logo": "isofluxlines_white.png",
+    "light_logo": "isofluxlines_black.png",
     "sidebar_hide_name": True,
     "light_css_variables": {
         "color-brand-primary": "#000000",  # black instead of blue
         "color-foreground-secondary": "#797979",  # slightly more muted than default
+        "color-sidebar-background": "#F2F1ED",
+        "color-sidebar-item-background--hover": "#E5E3DC",
+        "color-background-hover": "#E5E3DC",
+        "color-highlight-on-target": "#FDF8EB",
     },
     "dark_css_variables": {
         "color-brand-primary": "#fefaee",  # Off-white
         "color-brand-content": "#FFB000",  # Gold instead of dark blue
+        "color-sidebar-background": "#1A1C1E",
+        "color-sidebar-item-background--hover": "#1e2124",
+        "color-link": "#FDD378",
+        "color-link--visited": "#a58abf"
     },
 }
 
