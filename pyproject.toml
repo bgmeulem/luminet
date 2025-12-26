@@ -91,3 +91,6 @@ pip = ">=25.0.1,<26"
 
 [tool.pixi.dependencies]
 toml = ">=0.10.2,<0.11"
+
+[tool.pixi.tasks]
+plot = { args = [{"arg" = "incl", default="1.5"}], cmd = ["python", "-c", "from luminet.black_hole import BlackHole; import matplotlib.pyplot as plt; BlackHole(incl={{ incl }},outer_edge=60).plot(); plt.show(block=True)"]}
