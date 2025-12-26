@@ -43,7 +43,7 @@ platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
 
 [tool.pixi.package.build.backend]
 name = "pixi-build-python"
-version = "0.1.*"
+version = "==0.4.0"
 channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
