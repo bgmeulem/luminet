@@ -9,7 +9,7 @@ from scipy.special import ellipj, ellipk, ellipkinc
 from luminet.solver import improve_solutions
 
 def calc_q(p: float, bh_mass: float) -> float:
-    r"""Convert perigee :math:`P` to :math:`Q`
+    r"""Convert periastron :math:`P` to :math:`Q`
      
     The variable :math:`Q` has no explicit physical meaning, but makes
     many equations more readable.
@@ -30,8 +30,8 @@ def calc_q(p: float, bh_mass: float) -> float:
     return np.sqrt((p - 2.0 * bh_mass) * (p + 6.0 * bh_mass))
 
 
-def calc_b_from_perigee(p: float, bh_mass: float) -> float:
-    r"""Get impact parameter :math:`b` from the photon perigee :math:`P`
+def calc_b_from_periastron(p: float, bh_mass: float) -> float:
+    r"""Get impact parameter :math:`b` from the photon periastron :math:`P`
 
 
     .. math::
@@ -39,7 +39,7 @@ def calc_b_from_perigee(p: float, bh_mass: float) -> float:
        b = \sqrt{\frac{P^3}{P - 2M}}
 
     Args:
-        p (float): Perigee distance
+        p (float): periastron distance
         bh_mass (float): Black hole mass
 
     Attention:
@@ -95,7 +95,7 @@ def calc_k_squared(p: float, bh_mass: float):
         This is just a convention. However, ``scipy`` asks for the squared modulus :math:`m=k^2`, not the modulus.
 
     Args:
-        p (float): Perigee distance
+        p (float): periastron distance
         bh_mass (float): Black hole mass
     """
     q = calc_q(p, bh_mass)
@@ -115,7 +115,7 @@ def calc_zeta_inf(p: float, bh_mass: float) -> float:
        \zeta_\infty = \arcsin \left( \sqrt{\frac{Q - P + 2M}{Q - P + 6M}} \right)
 
     Args:
-        p (float): Perigee distance
+        p (float): periastron distance
         bh_mass (float): Black hole mass
 
     Returns:
@@ -139,7 +139,7 @@ def calc_zeta_r(p: float, r: float, bh_mass: float) -> float:
        \zeta_r = \arcsin \left( \sqrt{\frac{Q - P + 2M + \frac{4MP}{r}}{Q - P + 6M}} \right)
 
     Args:
-        p (float): Perigee distance
+        p (float): periastron distance
         r (float): Radius in the black hole frame.
         bh_mass (float): Black hole mass
 
@@ -211,7 +211,7 @@ def calc_sn(
         not the modulus :math:`k`.
 
     Args:
-        p (float): Perigee distance
+        p (float): periastron distance
         angle (float): Angle in the black hole frame :math:`\alpha`
         bh_mass (float): Black hole mass
         incl (float): Inclination of the observer :math:`\theta_0`
@@ -253,7 +253,7 @@ def calc_radius(
     incl: float,
     order: int = 0,
 ) -> float:
-    """Calculate the radius on the black hole accretion disk from a photon's perigee value.
+    """Calculate the radius on the black hole accretion disk from a photon's periastron value.
 
     Args:
         p (float): Periastron distance. This is directly related to the observer coordinate frame :math:`b`
@@ -263,9 +263,9 @@ def calc_radius(
         order (int): Order of the image. Default is :math:`0` (direct image).
 
     Attention:
-        This is not the equation used to solve for the perigee value :math:`P`.
+        This is not the equation used to solve for the periastron value :math:`P`.
         For the equation that is optimized in order to convert between black hole and observer frame,
-        see :py:meth:`perigee_optimization_function`.
+        see :py:meth:`periastron_optimization_function`.
 
     Returns:
         float: Black hole frame radius :math:`r` of the photon trajectory.
@@ -279,7 +279,7 @@ def calc_radius(
     return 4.0 * bh_mass * p / (term1 + term2)
 
 
-def perigee_optimization_function(
+def periastron_optimization_function(
     p: float,
     ir_radius: float,
     ir_angle: float,
@@ -295,10 +295,10 @@ def perigee_optimization_function(
 
         4 M P - r (Q - P + 2 M) + r (Q - P + 6 M) \text{sn}^2 \left( \frac{\gamma}{2 \sqrt{P/Q}} + F(\zeta_{\infty}, k) \right) = 0
 
-    When the above equation is zero, the photon perigee value :math:`P` is correct.
+    When the above equation is zero, the photon periastron value :math:`P` is correct.
 
     See also:
-        :py:meth:`solve_for_perigee` to calculate the perigee of a photon orbit, given an accretion disk radius of origin :math:`R`.
+        :py:meth:`solve_for_periastron` to calculate the periastron of a photon orbit, given an accretion disk radius of origin :math:`R`.
 
     Args:
         periastron (float): Periastron distance
@@ -309,7 +309,7 @@ def perigee_optimization_function(
         order (int): Order of the image. Default is :math:`0` (direct image).
 
     Returns:
-        float: Cost function value. Should be zero when the photon perigee value is correct.
+        float: Cost function value. Should be zero when the photon periastron value is correct.
     """
     q = calc_q(p, bh_mass)
     if q is np.nan:
@@ -321,19 +321,19 @@ def perigee_optimization_function(
     return zero_opt
 
 
-def solve_for_perigee(
+def solve_for_periastron(
     radius: float,
     incl: float,
     alpha: float,
     bh_mass: float,
     order: int = 0,
 ) -> float:
-    r"""Calculate the perigee of a photon trajectory, when the black hole coordinates are known.
+    r"""Calculate the periastron of a photon trajectory, when the black hole coordinates are known.
 
-    This photon perigee can be converted to an impact parameter :math:`b`, yielding the observer frame coordinates :math:`(b, \alpha)`.
+    This photon periastron can be converted to an impact parameter :math:`b`, yielding the observer frame coordinates :math:`(b, \alpha)`.
 
     See also:
-        :py:meth:`perigee_optimization_function` for the optimization function used.
+        :py:meth:`periastron_optimization_function` for the optimization function used.
     
     See also:
         :py:meth:`solve_for_impact_parameter` to also convert periastron distance to impact parameter :math:`b` (observer frame).
@@ -346,7 +346,7 @@ def solve_for_perigee(
         order (int): Order of the image. Default is :math:`0` (direct image).
 
     Returns:
-        float: Perigee distance :math:`P` of the photon
+        float: periastron distance :math:`P` of the photon
     """
 
     if radius <= 3 * bh_mass:
@@ -365,7 +365,7 @@ def solve_for_perigee(
     # Check if the solution is in the initial range
     y = np.array(
         [
-            perigee_optimization_function(periastron_guess, radius, alpha, bh_mass, incl, order)
+            periastron_optimization_function(periastron_guess, radius, alpha, bh_mass, incl, order)
             for periastron_guess in periastron_initial_guess
         ]
     )
@@ -385,7 +385,7 @@ def solve_for_perigee(
         "order": order,
     }
     periastron = improve_solutions(
-        func=perigee_optimization_function,
+        func=periastron_optimization_function,
         x=periastron_initial_guess,
         y=y,
         kwargs=kwargs_eq13,
@@ -402,13 +402,13 @@ def solve_for_impact_parameter(
 ) -> float:
     r"""Calculate observer coordinates of a BH frame photon.
 
-    This method solves Equation 13 to get the photon perigee distance for a given coordinate on the black hole accretion
+    This method solves Equation 13 to get the photon periastron distance for a given coordinate on the black hole accretion
     disk :math:`(r, \alpha)`. 
-    The observer coordinates :math:`(b, \alpha)` are then calculated from the perigee distance. 
+    The observer coordinates :math:`(b, \alpha)` are then calculated from the periastron distance. 
 
     Attention:
         Photons that originate from close to the black hole, and the front of the accretion disk, have orbits whose
-        perigee is below :math:`3M` (and thus would be absorbed by the black hole), but still make it to the camera in the observer frame.
+        periastron is below :math:`3M` (and thus would be absorbed by the black hole), but still make it to the camera in the observer frame.
         These photons are not absorbed by the black hole, since they simply never actually travel the part of their orbit that lies below :math:`3M`
 
     Args:
@@ -425,19 +425,19 @@ def solve_for_impact_parameter(
     if order % 2 == 1:
         alpha = (alpha + np.pi) % (2 * np.pi)
 
-    periastron_solution = solve_for_perigee(radius, incl, alpha, bh_mass, order)
+    periastron_solution = solve_for_periastron(radius, incl, alpha, bh_mass, order)
 
-    # Photons that have no perigee and are not due to the exception described above are simply absorbed
+    # Photons that have no periastron and are not due to the exception described above are simply absorbed
     if periastron_solution is np.nan:
         if order == 0 and ((alpha < np.pi / 2) or (alpha > 3 * np.pi / 2)):
             # Photons with small R in the lower half of the image originate from photon orbits that
-            # have a perigee < 3M. However, these photons are not absorbed by the black hole and do in fact reach the camera,
+            # have a periastron < 3M. However, these photons are not absorbed by the black hole and do in fact reach the camera,
             # since they never actually travel this forbidden part of their orbit.
             # --> Return the newtonian limit i.e. just an ellipse, like the rings of saturn that are visible in front of saturn.
             return ellipse(radius, alpha, incl)
         else:
             return np.nan
-    b = calc_b_from_perigee(periastron_solution, bh_mass)
+    b = calc_b_from_periastron(periastron_solution, bh_mass)
     return b
 
 
@@ -446,7 +446,7 @@ def ellipse(r, a, incl) -> float:
     
     This equation can be used for calculations in the Newtonian limit (large :math:`P \approx b`)
     It is also used to interpolate photons that originate from close to the black hole, and the front of the accretion disk.
-    In this case, their perigee theoretically lies below :math:`3M`, but they are not absorbed by the black hole, as
+    In this case, their periastron theoretically lies below :math:`3M`, but they are not absorbed by the black hole, as
     they travel away from the black hole, and never actually reach the part of their orbit that lies below :math:`3M`.
 
     Args:

@@ -27,7 +27,7 @@ class TestParametrized:
         """
         Test the method for calculating the impact parameter with varying input parameters
         """
-        bhmath.solve_for_perigee(
+        bhmath.solve_for_periastron(
             radius=radius * mass,
             incl=incl,
             alpha=angle,
