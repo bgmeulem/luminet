@@ -7,12 +7,12 @@
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
-<img src="docs/_static/_images/bh.png" width=460px>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/bh.png?raw=true" width=460px>
 
 <p>
-<img src="docs/_static/_images/isoradials.png" width=150px hspace=0>
-<img src="docs/_static/_images/isoredshifts.png" width=150px hspace=0>
-<img src="docs/_static/_images/isofluxlines.png" width=150px hspace=0>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isoradials.png?raw=true" width=150px hspace=0>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isoredshifts.png?raw=true" width=150px hspace=0>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isofluxlines.png?raw=true" width=150px hspace=0>
 </p>
 
 </div>
