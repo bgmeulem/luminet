@@ -6,8 +6,6 @@ Provides convenience functions for plotting colored lines.
 import matplotlib.collections as mcoll
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import cm
-
 
 def make_segments(x, y):
     """
@@ -22,14 +20,29 @@ def make_segments(x, y):
 
 
 def colorline(ax, x, y, z, norm, cmap, linewidth=3, **kwargs):
+    """Plot a line that changes color along the way.
+
+    Args:
+        ax (:class:`~matplotlib.axes.Axes`): Where to plot the line on
+        x (array-like): x-coordinates (or angles in polar)
+        y (array-like): y-coordinates (or radii in polar)
+        z (array-like): color values.
+        norm (tuple): Min and max of the colorscale.
+        cmap (str): Name of the colormap.
+        linewidth (float): width of the line.
+        kwargs (optional): Additional keyword arguments to pass to :class:`matplotlib.collections.LineCollection`.
+
+    See also:
+        http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
+    
+    See also:
+        http://matplotlib.org/examples/pylab_examples/multicolored_line.html
+
+    Returns:
+        :class:`~matpltolib.axes.Axes`: Axes with plotted line.
+
     """
-    http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
-    http://matplotlib.org/examples/pylab_examples/multicolored_line.html
-    Plot a colored line with coordinates x and y
-    Optionally specify colors in the array z
-    Optionally specify a colormap, a norm function and a line width
-    """
-    cmap = cm.get_cmap(cmap)
+    cmap = plt.get_cmap(cmap)
     norm = plt.Normalize(*norm)
     segments = make_segments(x, y)
     lc = mcoll.LineCollection(

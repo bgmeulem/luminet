@@ -18,9 +18,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: prefix-dev/setup-pixi@v0.8.2
+    - uses: prefix-dev/setup-pixi@v0.9.3
       with:
-        pixi-version: v0.41.3
+        pixi-version: v0.62.2
         cache: true
         auth-host: prefix.dev
         auth-token: ${{ secrets.PREFIX_DEV_TOKEN }}
@@ -30,3 +30,5 @@ jobs:
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
       if: matrix.os == 'ubuntu-latest'
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

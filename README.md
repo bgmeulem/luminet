@@ -1,19 +1,28 @@
 <div align="center">
   
-# Luminet
-![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/Luminet?label=ci&style=flat-square) [![PyPI-badge](https://img.shields.io/pypi/v/luminet?pypiBaseUrl=https%3A%2F%2Fpypi.org&style=flat-square&logo=pypi&logoColor=white&link=https%3A%2F%2Fpypi.org%2Fproject%2Fluminet%2F)](https://pypi.org/project/luminet) [![Documentation Status](https://readthedocs.org/projects/luminet/badge/?version=latest&style=flat-square)](https://luminet.readthedocs.io/en/latest/?badge=latest) ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square) ![stars-badge](https://img.shields.io/github/stars/bgmeulem/Luminet?style=flat-square) ![license](https://img.shields.io/github/license/bgmeulem/Luminet?style=flat-square)
+# luminet
+![ci-badge](https://img.shields.io/appveyor/build/bgmeulem/luminet?label=ci&style=flat-square) [![Documentation Status](https://readthedocs.org/projects/luminet/badge/?version=latest&style=flat-square)](https://luminet.readthedocs.io/en/latest/?badge=latest) [![PyPI-badge](https://img.shields.io/pypi/v/luminet?pypiBaseUrl=https%3A%2F%2Fpypi.org&style=flat-square&logo=pypi&logoColor=white&link=https%3A%2F%2Fpypi.org%2Fproject%2Fluminet%2F)](https://pypi.org/project/luminet)
+[![Anaconda-Server Badge](https://anaconda.org/bgmeulem/luminet/badges/version.svg)](https://anaconda.org/bgmeulem/luminet)
+ ![coverage](https://img.shields.io/codecov/c/github/bgmeulem/Luminet?style=flat-square)
 
 Simulate and visualize Swarzschild black holes, based on the methods described in Luminet (1979).
 
-![Example plot of a black hole](https://raw.githubusercontent.com/bgmeulem/luminet/master/assets/bh_plot.png)
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/bh.png?raw=true" width=460px>
+
+<p>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isoradials.png?raw=true" width=150px hspace=0>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isoredshifts.png?raw=true" width=150px hspace=0>
+<img src="https://github.com/bgmeulem/luminet/blob/master/docs/_static/_images/isofluxlines.png?raw=true" width=150px hspace=0>
+</p>
+
 </div>
 
 ## ⚡ Install
-`luminet` is available from PyPI:
-
+`luminet` is available from [PyPI](https://pypi.org/project/luminet/) and [Anaconda](https://anaconda.org/bgmeulem/luminet):
 ```shell
-pip install luminet
+pixi add --pypi luminet
 ```
+
 
 ## 📖 [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
 
@@ -22,22 +31,25 @@ pip install luminet
 All variables in this repo are in natural units: $G=c=1$
 
 ```python
->>> from luminet.black_hole import BlackHole
->>> bh = BlackHole(
-...     mass=1,
-...     incl=1.5,           # inclination in radians
-...     acc=1,              # accretion rate
-...     outer_edge=40)
+from luminet.black_hole import BlackHole
+bh = BlackHole(
+    mass=1,
+    incl=1.4,           # inclination in radians
+    acc=1,              # accretion rate
+    outer_edge=40
+)
 ```
 To create an image:
 ```python
->>> ax = bh.plot()          # Create image like above
+ax = bh.plot()          # Create image like above
 ```
 
 To sample photons on the accretion disk:
 ```python
->>> bh.sample_photons(100)
->>> bh.photons
+bh.sample_photons(100)
+bh.photons
+```
+```
 radius  alpha   impact_parameter    z_factor    flux_o
 10.2146 5.1946  1.8935              1.1290      1.8596e-05
 ... (99 more)
@@ -53,13 +65,6 @@ the accretion disk orbiting the black hole emits photons at radii $r>6M$. As lon
 $$b^2 = \frac{P^3}{P-2M}$$
 
 This makes many equations significantly more straightforward. 
-You may notice this equation has a square on the left hand side, in contrast to Luminet (1979). The original manuscript has a handful of notation errors. I've contacted the author about this, to which he kindly responded:
-
-> "[...] à l’époque je n'avais pas encore l’expérience de relire très soigneusement les épreuves. Mais mes calculs avaient  heureusement été faits avec les bonnes formules, sinon le résultat visuel n’aurait pas été correct!" 
->
->"Back in the day, I did not have the habit of carefully double-checking my proofs. Luckily, I did calculate the results with the correct formulas, otherwise the image wouldn't be right!".
-
-Just so you know. I tried to be diligent about noting where this code differs from the paper. 
 
 The relationship between the angles of both coordinate systems is trivial, but the relationship between the radii in the two reference frames is given by the monstruous Equation 13:
 
@@ -69,7 +74,7 @@ Here, $F$ is an incomplete Jacobian elliptic integral of the first kind, $k$ and
 
 $$\cos(\gamma) = \frac{\cos(\alpha)}{\sqrt{\cos^2\alpha + \cot^2\theta_0}}$$
 
-In curved spacetime, there is usually more than one photon orbit that originates from the accretion disk, and arrives at the observer frame. Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
+In curved spacetime, there are usually multiple photon orbits that originate from the same coordinate and project to the ibserver frame (see e.g. gravitational lensing and Einstein crosses). Photon orbits that curve around the black hole and reach the observer frame are called "higher order" images, or "ghost" images. In this case, $\gamma$ satisfies:
 
 $$2n\pi - \gamma = 2\sqrt{\frac{Q}{P}} \left( 2K(k) - F(\zeta_\infty, k) - F(\zeta_r, k)  \right)$$
 
@@ -81,3 +86,5 @@ This repo uses `scipy.optimize.brentq` to solve these equations, and provides co
 [1] Luminet, J.-P., [“Image of a spherical black hole with thin accretion disk.”](https://ui.adsabs.harvard.edu/abs/1979A%26A....75..228L/abstract), <i>Astronomy and Astrophysics</i>, vol. 75, pp. 228–235, 1979.
 
 [2] J.-P. Luminet, [“An Illustrated History of Black Hole Imaging : Personal Recollections (1972-2002).”](https://arxiv.org/abs/1902.11196) arXiv, 2019. doi: 10.48550/ARXIV.1902.11196. 
+
+[3] Don N Page and Kip S Thorne. [Disk-accretion onto a black hole. time-averaged structure of accretion disk.](https://ui.adsabs.harvard.edu/abs/1974ApJ...191..499P/abstract) Astrophys. J., 191:499, July 1974.

@@ -2,7 +2,7 @@
 authors = [{ name = "bgmeulem", email="bjorge.meulemeester@mpinb.mpg.de"}]
 description = "A leightweight Python package for calculating and plotting Swarzschild black holes with thin accretion disk."
 name = "luminet"
-version = "0.1.1"
+version = "0.2.2"
 requires-python = ">=3.5"
 # PyPI dependencies
 dependencies = [
@@ -41,8 +41,9 @@ preview = ["pixi-build"]
 channels = ["https://prefix.dev/conda-forge"]
 platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
 
-[tool.pixi.package.build]
-backend = { name = "pixi-build-python", version = "0.1.*" }
+[tool.pixi.package.build.backend]
+name = "pixi-build-python"
+version = "==0.4.0"
 channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
@@ -91,3 +92,6 @@ pip = ">=25.0.1,<26"
 
 [tool.pixi.dependencies]
 toml = ">=0.10.2,<0.11"
+
+[tool.pixi.tasks]
+plot = { args = [{"arg" = "incl", default="1.5"}], cmd = ["python", "-c", "from luminet.black_hole import BlackHole; import matplotlib.pyplot as plt; BlackHole(incl={{ incl }},outer_edge=60).plot(); plt.show(block=True)"]}

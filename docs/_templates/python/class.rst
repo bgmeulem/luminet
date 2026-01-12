@@ -13,7 +13,7 @@
    :hidden:
 
       {% for child in own_page_children %}
-   {{ child.include_path }}
+   {{ child.id.split('.') | last }} <{{ child.include_path }}>
       {% endfor %}
 
    {% endif %}

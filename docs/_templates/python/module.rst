@@ -26,7 +26,7 @@ Submodules
    :maxdepth: 1
 
             {% for submodule in visible_submodules %}
-   {{ submodule.include_path }}
+   {{ submodule.id.split('.') | last }} <{{ submodule.include_path }}>
             {% endfor %}
 
 
@@ -46,7 +46,7 @@ Attributes
    :hidden:
 
                      {% for attribute in visible_attributes %}
-   {{ attribute.include_path }}
+   {{ attribute.id.split('.') | last }} <{{ attribute.include_path }}>
                      {% endfor %}
 
                   {% endif %}
@@ -70,7 +70,7 @@ Exceptions
    :hidden:
 
                      {% for exception in visible_exceptions %}
-   {{ exception.include_path }}
+   {{ exception.id.split('.') | last }} <{{ excpetion.include_path }}>
                      {% endfor %}
 
                   {% endif %}
@@ -94,7 +94,7 @@ Classes
    :hidden:
 
                      {% for klass in visible_classes %}
-   {{ klass.include_path }}
+   {{ klass.id.split('.') | last }} <{{ klass.include_path }}>
                      {% endfor %}
 
                   {% endif %}
@@ -118,7 +118,7 @@ Functions
    :hidden:
 
                      {% for function in visible_functions %}
-   {{ function.include_path }}
+   {{ function.id.split('.') | last }} <{{ function.include_path }}>
                      {% endfor %}
 
                   {% endif %}
