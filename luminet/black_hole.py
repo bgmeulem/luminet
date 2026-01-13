@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import numpy as np
-import pandas as pd
 
 from luminet import black_hole_math as bhmath
 from luminet.isoradial import Isoradial
 from luminet.isoredshift import Isoredshift
+from luminet.photon import Photon
 
 
 class BlackHole:
@@ -77,6 +77,10 @@ class BlackHole:
         """List[Isoradial]: list of calculated isoradials"""
         self.isoredshifts = []
         """List[Isoredshift]: list of calculated isoredshifts"""
+        self.photons = List[Photon]
+        """Individual :class:`~luminet.photon.Photon` objects sampled on the accretion disk."""
+        self.ghost_photons = List[Photon]
+        """Ghost images of :param:`~photons`."""
 
     def _calc_max_flux(self):
         r"""Get the maximum intrinsic flux emitted by the black hole
@@ -448,11 +452,11 @@ class BlackHole:
                 )
         return ax
 
-    def sample_photons(self, n_points=1000) -> Tuple[pd.DataFrame]:
+    def sample_photons(self, n_points=1000) -> Tuple[Photon]:
         r"""Sample points on the accretion disk.
 
         Photons are appended as class-level attributes.
-        Each photon is a :class:`pandas.series.Series` with the following properties:
+        Each photon is a :class:`luminet.photon.Photon` with the following properties:
 
         - ``radius``: radius of the photon on the accretion disk :math:`r`
         - ``alpha``: angle of the photon on the accretion disk :math:`\alpha`
@@ -468,7 +472,7 @@ class BlackHole:
             center of the accretion disk, as this is where most of the luminosity comes from.
 
         Returns:
-            Tuple[:class:`~pandas.dataframe.DataFrame`]:
+            Tuple[:class:`~luminet.photon.Photon`]:
                 Dataframes containing photons for both direct and ghost image.
         """
         n_points = int(n_points)
@@ -491,35 +495,28 @@ class BlackHole:
                 ],
             )
 
-        df = pd.DataFrame(photons)
-        df["z_factor"] = bhmath.calc_redshift_factor(
-            df["radius"],
-            df["alpha"],
-            self.incl,
-            self.mass,
-            df["impact_parameter"],
-        )
-        df["flux_o"] = bhmath.calc_flux_observed(
-            df["radius"], self.acc, self.mass, df["z_factor"]
-        )
+        # Convert lists of Photon to numpy arrays for fast vectorized computation
+        def compute_properties(photon_list: List[Photon]):
+            r = np.array([ph.radius for ph in photon_list])
+            alpha = np.array([ph.alpha for ph in photon_list])
+            b = np.array([ph.impact_parameter for ph in photon_list])
 
-        df_ghost = pd.DataFrame(ghost_photons)
-        df_ghost["z_factor"] = bhmath.calc_redshift_factor(
-            df_ghost["radius"],
-            df_ghost["alpha"],
-            self.incl,
-            self.mass,
-            df_ghost["impact_parameter"],
-        )
-        df_ghost["flux_o"] = bhmath.calc_flux_observed(
-            df_ghost["radius"], self.acc, self.mass, df_ghost["z_factor"]
-        )
+            # vectorized z_factor and flux_o
+            z_factor = bhmath.calc_redshift_factor(r, alpha, self.incl, self.mass, b)
+            flux_o = bhmath.calc_flux_observed(r, self.acc, self.mass, z_factor)
 
-        self.photons = df
-        self.ghost_photons = df_ghost
+            # update photon objects
+            for i, ph in enumerate(photon_list):
+                ph.z_factor = z_factor[i]
+                ph.flux_o = flux_o[i]
 
-        return self.photons, self.ghost_photons
+        compute_properties(photons)
+        compute_properties(ghost_photons)
 
+        self.photons = photons
+        self.ghost_photons = ghost_photons
+
+        return photons, ghost_photons
 
 def sample_photon(min_r, max_r, incl, bh_mass, n):
     r"""Sample a random photon from the accretion disk
@@ -558,11 +555,7 @@ def sample_photon(min_r, max_r, incl, bh_mass, n):
         b is not np.nan
     ), f"b is nan for r={r}, alpha={alpha}, incl={incl}, M={bh_mass}, n={n}"
     # f_o = flux_observed(r, acc_r, bh_mass, redshift_factor_)
-    return {
-        "radius": r,
-        "alpha": alpha,
-        "impact_parameter": b,
-    }
+    return Photon(radius=r, alpha=alpha, impact_parameter=b)
 
 def _call_calc_redshift_locations(ir, redshift):
     """Helper function for multiprocessing"""
