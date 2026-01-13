@@ -57,6 +57,7 @@ env = { "PYTHONPATH" = "$PYTHONPATH:$(pwd)/src" }
 docs = ["docs"]
 build = ["build"]
 test = ["test"]
+py35 = ['py35']
 
 [tool.pixi.feature.test.tasks]
 test = { cmd = "coverage run -m pytest", cwd = "tests"}
@@ -95,3 +96,7 @@ scipy = ">=0.17.0,<2"
 
 [tool.pixi.tasks]
 plot = { args = [{"arg" = "incl", default="1.5"}], cmd = ["python", "-c", "from luminet.black_hole import BlackHole; import matplotlib.pyplot as plt; BlackHole(incl={{ incl }},outer_edge=60).plot(); plt.show(block=True)"]}
+
+[tool.pixi.feature.py35]
+dependencies = {python = "~=3.5", pytest = ">=9.0.2,<10" }
+platforms = ["linux-64"]
