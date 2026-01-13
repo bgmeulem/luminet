@@ -4,13 +4,6 @@ description = "A leightweight Python package for calculating and plotting Swarzs
 name = "luminet"
 version = "0.2.2"
 requires-python = ">=3.5"
-# PyPI dependencies
-dependencies = [
-    "matplotlib>=3.10.0,<4",
-    "numpy>=2.2.2,<3",
-    "scipy>=1.15.1,<2",
-    "pandas>=2.2.3,<3",
-]
 
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -35,6 +28,10 @@ build = ["build>=1.2.2.post1,<2"]
 
 [tool.setuptools]
 packages = ["luminet"]
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
 
 [tool.pixi.workspace]
 preview = ["pixi-build"]
@@ -92,6 +89,9 @@ pip = ">=25.0.1,<26"
 
 [tool.pixi.dependencies]
 toml = ">=0.10.2,<0.11"
+matplotlib = ">=2.0,<4"
+numpy = ">=1.14,<3"
+scipy = ">=0.17.0,<2"
 
 [tool.pixi.tasks]
 plot = { args = [{"arg" = "incl", default="1.5"}], cmd = ["python", "-c", "from luminet.black_hole import BlackHole; import matplotlib.pyplot as plt; BlackHole(incl={{ incl }},outer_edge=60).plot(); plt.show(block=True)"]}
