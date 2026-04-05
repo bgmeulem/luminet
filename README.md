@@ -18,7 +18,7 @@ Simulate and visualize Swarzschild black holes, based on the methods described i
 </div>
 
 ## ⚡ Install
-`luminet` is available from [PyPI](https://pypi.org/project/luminet/) and [Anaconda](https://anaconda.org/bgmeulem/luminet):
+`luminet` is available from [PyPI](https://pypi.org/project/luminet/), [conda-forge](https://anaconda.org/conda-forge/luminet), and [Anaconda](https://anaconda.org/bgmeulem/luminet):
 ```shell
 pixi add --pypi luminet
 ```
