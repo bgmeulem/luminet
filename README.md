@@ -33,7 +33,8 @@ conda install luminet
 ```
 
 
-## 📖 [Documentation](https://luminet.readthedocs.io/en/latest/index.html)
+## 📖 Documentation
+Documentation is available at [luminet.readthedocs.io](https://luminet.readthedocs.io/en/latest/index.html)
 
 ## 🔩 Usage
 
